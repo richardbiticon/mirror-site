@@ -26,6 +26,48 @@
   --ease-mirror: cubic-bezier(0.16, 1, 0.3, 1);
 
   --radius-none: 0;
+
+  /* Animation tokens consumed by Radix Accordion + Dialog wrappers. */
+  --animate-accordion-down: accordion-down 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-accordion-up: accordion-up 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fade-in: fade-in 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fade-out: fade-out 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 /* ---------------------------------------------------------------------------

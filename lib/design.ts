@@ -1,7 +1,7 @@
 /**
  * Mirror brand design tokens.
  * Locked. Source of truth for any code that needs to read brand values.
- * Visual changes require a Chair Brief — see /docs/02-brand-guide.md.
+ * Visual changes require a Chair Brief. see /docs/02-brand-guide.md.
  */
 
 export const color = {

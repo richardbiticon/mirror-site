@@ -14,7 +14,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: {
     default: "Mirror",
-    template: "%s — Mirror",
+    template: "%s · Mirror",
   },
   description:
     "Mirror builds you a private AI clone of your best customer, so you can sell to them before you sell to anyone else.",
