@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { JetBrains_Mono } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
+import { Nav } from "@/components/layout/nav";
+import { Footer } from "@/components/layout/footer";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -30,6 +33,8 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,7 +45,25 @@ export default function RootLayout({
       lang="en"
       className={`${GeistSans.variable} ${jetbrainsMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-signal focus:text-void focus:px-4 focus:py-2 focus:text-eyebrow"
+        >
+          Skip to content
+        </a>
+        <Nav />
+        {children}
+        <Footer />
+        {plausibleDomain ? (
+          <Script
+            defer
+            src="https://plausible.io/js/script.js"
+            data-domain={plausibleDomain}
+            strategy="afterInteractive"
+          />
+        ) : null}
+      </body>
     </html>
   );
 }
