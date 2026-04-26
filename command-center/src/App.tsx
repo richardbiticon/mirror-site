@@ -5,13 +5,14 @@ import { StageFilter, type StageFilterValue } from "./components/StageFilter";
 import { ConvertLeadForm } from "./components/ConvertLeadForm";
 import { ProjectList } from "./components/ProjectList";
 import { ProjectDetail } from "./components/ProjectDetail";
+import { Dashboard } from "./components/Dashboard";
 import { useLeads } from "./hooks/useLeads";
 import { useProjects } from "./hooks/useProjects";
 import { formatPhp } from "./lib/format";
 import { summarizeProjectMoney } from "./lib/milestones";
 import type { Lead, LeadStage } from "./types";
 
-type Tab = "leads" | "projects";
+type Tab = "dashboard" | "leads" | "projects";
 
 export default function App() {
   const { leads, addLead, updateStage, resetToSeed: resetLeads } = useLeads();
@@ -26,7 +27,7 @@ export default function App() {
     resetToSeed: resetProjects,
   } = useProjects();
 
-  const [tab, setTab] = useState<Tab>("leads");
+  const [tab, setTab] = useState<Tab>("dashboard");
   const [filter, setFilter] = useState<StageFilterValue>("all");
   const [showForm, setShowForm] = useState(false);
   const [convertingLead, setConvertingLead] = useState<Lead | null>(null);
@@ -121,6 +122,11 @@ export default function App() {
 
         <div className="mx-auto flex max-w-6xl gap-1 px-6">
           <TabButton
+            active={tab === "dashboard"}
+            onClick={() => setTab("dashboard")}
+            label="Dashboard"
+          />
+          <TabButton
             active={tab === "leads"}
             onClick={() => setTab("leads")}
             label="Leads"
@@ -139,7 +145,17 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-8">
-        {tab === "leads" ? (
+        {tab === "dashboard" ? (
+          <Dashboard
+            leads={leads}
+            projects={projects}
+            onOpenProject={(id) => {
+              setSelectedProjectId(id);
+              setTab("projects");
+            }}
+            onGoToLeads={() => setTab("leads")}
+          />
+        ) : tab === "leads" ? (
           <>
             <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
               <Stat label="Active Leads" value={String(activeLeadCount)} />
@@ -270,7 +286,7 @@ function TabButton({
   active: boolean;
   onClick: () => void;
   label: string;
-  count: number;
+  count?: number;
 }) {
   return (
     <button
@@ -284,7 +300,9 @@ function TabButton({
       }
     >
       {label}
-      <span className="ml-2 font-mono text-slate-500">{count}</span>
+      {count !== undefined && (
+        <span className="ml-2 font-mono text-slate-500">{count}</span>
+      )}
     </button>
   );
 }
