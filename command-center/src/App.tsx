@@ -4,9 +4,11 @@ import { AddLeadForm } from "./components/AddLeadForm";
 import { StageFilter, type StageFilterValue } from "./components/StageFilter";
 import { ConvertLeadForm } from "./components/ConvertLeadForm";
 import { ProjectList } from "./components/ProjectList";
+import { ProjectDetail } from "./components/ProjectDetail";
 import { useLeads } from "./hooks/useLeads";
 import { useProjects } from "./hooks/useProjects";
 import { formatPhp } from "./lib/format";
+import { summarizeProjectMoney } from "./lib/milestones";
 import type { Lead, LeadStage } from "./types";
 
 type Tab = "leads" | "projects";
@@ -18,6 +20,9 @@ export default function App() {
     convertLead,
     updateStatus,
     updateProgress,
+    addMilestone,
+    updateMilestoneStatus,
+    deleteMilestone,
     resetToSeed: resetProjects,
   } = useProjects();
 
@@ -25,6 +30,14 @@ export default function App() {
   const [filter, setFilter] = useState<StageFilterValue>("all");
   const [showForm, setShowForm] = useState(false);
   const [convertingLead, setConvertingLead] = useState<Lead | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
+    null
+  );
+
+  const selectedProject = useMemo(
+    () => projects.find((p) => p.id === selectedProjectId) ?? null,
+    [projects, selectedProjectId]
+  );
 
   const convertedLeadIds = useMemo(
     () =>
@@ -69,6 +82,11 @@ export default function App() {
     (p) => p.status === "planning" || p.status === "in_progress"
   ).length;
 
+  const totalPaid = projects.reduce(
+    (sum, p) => sum + summarizeProjectMoney(p).paid,
+    0
+  );
+
   return (
     <div className="min-h-full">
       <header className="border-b border-slate-800 bg-slate-950">
@@ -110,7 +128,10 @@ export default function App() {
           />
           <TabButton
             active={tab === "projects"}
-            onClick={() => setTab("projects")}
+            onClick={() => {
+              setTab("projects");
+              setSelectedProjectId(null);
+            }}
             label="Projects"
             count={projects.length}
           />
@@ -190,6 +211,16 @@ export default function App() {
               }}
             />
           </>
+        ) : selectedProject ? (
+          <ProjectDetail
+            project={selectedProject}
+            onBack={() => setSelectedProjectId(null)}
+            onStatusChange={updateStatus}
+            onProgressChange={updateProgress}
+            onAddMilestone={addMilestone}
+            onMilestoneStatus={updateMilestoneStatus}
+            onMilestoneDelete={deleteMilestone}
+          />
         ) : (
           <>
             <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -198,13 +229,10 @@ export default function App() {
                 value={String(activeProjectsCount)}
               />
               <Stat
-                label="Total Projects"
-                value={String(projects.length)}
-              />
-              <Stat
                 label="Contract Value"
                 value={formatPhp(activeProjectsValue)}
               />
+              <Stat label="Total Paid" value={formatPhp(totalPaid)} />
             </section>
 
             <section className="mb-3 flex items-baseline justify-between">
@@ -220,6 +248,7 @@ export default function App() {
               projects={projects}
               onStatusChange={updateStatus}
               onProgressChange={updateProgress}
+              onOpen={(id) => setSelectedProjectId(id)}
             />
           </>
         )}

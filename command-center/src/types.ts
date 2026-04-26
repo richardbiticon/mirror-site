@@ -34,6 +34,19 @@ export interface Lead {
   updatedAt: string;
 }
 
+export type MilestoneStatus = "pending" | "invoiced" | "paid";
+
+export interface Milestone {
+  id: string;
+  name: string;
+  percentOfContract: number;
+  amountPhp: number;
+  status: MilestoneStatus;
+  dueDate: string;
+  paidDate?: string;
+  notes?: string;
+}
+
 export interface Project {
   id: string;
   leadId?: string;
@@ -44,6 +57,7 @@ export interface Project {
   startDate: string;
   targetEndDate: string;
   progressPercent: number;
+  milestones: Milestone[];
   notes?: string;
   createdAt: string;
   updatedAt: string;
