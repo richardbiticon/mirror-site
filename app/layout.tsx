@@ -2,8 +2,6 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { JetBrains_Mono } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
-import { Nav } from "@/components/layout/nav";
-import { Footer } from "@/components/layout/footer";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -35,6 +33,12 @@ export const viewport: Viewport = {
 
 const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
+/**
+ * Root layout. Establishes the html shell, fonts, viewport, color scheme,
+ * Plausible tracking, and the global skip-to-content link. The Nav and
+ * Footer live in (marketing)/layout.tsx so they wrap only the public
+ * marketing pages and not /demo (chat-only) or /dev (internal QA).
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -52,9 +56,7 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <Nav />
         {children}
-        <Footer />
         {plausibleDomain ? (
           <Script
             defer

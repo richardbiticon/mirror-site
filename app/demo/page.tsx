@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/layout/coming-soon";
+import { DemoShell } from "@/components/demo/demo-shell";
 
 export const metadata: Metadata = {
   title: "Demo",
@@ -8,13 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function DemoPage() {
-  return (
-    <ComingSoon
-      eyebrow="LIVE DEMO"
-      headline="The demo is being calibrated."
-      subhead="The live Mirror surfaces in Phase 5 of the build. Until then, book a Diagnostic Call and we will run the demo for you on a recognizable brand."
-      ctaLabel="Book a call"
-      ctaHref="/book"
-    />
-  );
+  return <DemoShell />;
 }
