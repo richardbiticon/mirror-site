@@ -1,9 +1,11 @@
 # 02 — Mirror Brand Guide
 
 **Owner:** Richard
-**Version:** v1
-**Last updated:** 2026-04-25
+**Version:** v2
+**Last updated:** 2026-04-27
 **Status:** Locked. Visual changes require a Chair Brief.
+
+**v2 changelog:** Repositioning per /docs/mirror-rebuild-brief-v2.md. §Application Examples updated to the v2 hero copy. §Forbidden Phrases expanded from five to nine. Visual system, color, typography, motion, components, and anti-patterns are unchanged from v1. v1 brand guide preserved at git commit 6a2ee19.
 
 ---
 
@@ -241,7 +243,9 @@ Confident. Cold. Brief. Slightly cryptic. We never explain too much. We let the 
 
 Short sentences. Then occasionally a longer one that explains the consequence. Then short again. The rhythm itself signals confidence.
 
-### The Five Forbidden Phrases
+### The Nine Forbidden Phrases
+
+The original five (locked at the company level since v1):
 
 1. "AI-powered" (lazy, generic)
 2. "Revolutionize" (empty)
@@ -249,25 +253,37 @@ Short sentences. Then occasionally a longer one that explains the consequence. T
 4. "Unlock" (overused)
 5. "Leverage" as a verb (corporate slop)
 
+Plus four added in v2 because they collapse the Decision Engine repositioning back into v1 metaphor or industry jargon:
+
+6. "Clone of your customer" (the v1 metaphor; cut everywhere)
+7. "Talk to your customer" (the v1 hero; replaced)
+8. "Voice of customer" (industry jargon, generic)
+9. "Customer insights" (vague, every research firm uses this)
+
 ### The Em Dash Rule
 
 No em dashes. Ever. Use periods, commas, or colons. This is locked.
 
 ### Headline Style
 
-Headlines are statements, not questions. They make a claim, then dare you to disagree. "Talk to your customer before you build the campaign." Not "What if you could talk to your customer?"
+Headlines are statements, not questions. They make a claim, then dare you to disagree. "Make every customer decision 30 minutes faster." Not "What if your team could decide faster?"
 
 ---
 
 ## Application Examples
 
-### Homepage hero (locked structure)
+### Homepage hero (locked structure, v2 form)
 
-- Eyebrow: `MIRROR / M1` in Berkeley Mono 12px all-caps Ash
-- Headline: `Talk to your customer.` in Berkeley Mono Display XL Bone
-- Subhead: One sentence, Geist Body L, max 60 characters, Bone at 70% opacity
-- Two CTAs side by side: Primary "Try a live Mirror" and Secondary "Book a call"
-- Hero animation: the resolving face, behind/around the typography, never blocking it
+- Eyebrow: `MIRROR · DECISION ENGINE` in Berkeley Mono 12px all-caps, Signal-tinted
+- Headline (three lines, Berkeley Mono Display XL Bone, manually broken):
+  `Make every customer decision`
+  `30 minutes faster.`
+  `Without guessing.`
+- Subhead (Body L, Geist, Bone at 70% opacity, max width 540px):
+  `Mirror is a private decision engine for marketing teams. Pre-test your creative, brief your team, and ship campaigns with measurable confidence. Built on your data. Owned by you.`
+- Two CTAs side by side: Primary `RUN A FREE PRE-TEST` and Secondary `BOOK A CALL`
+- Below-CTAs caption (Berkeley Mono 12px caps, Ash): `USED BY MARKETING TEAMS AT COMPANIES BETWEEN $5M AND $200M.`
+- Hero animation: the canvas particle field with cursor repulsion (current implementation; the brand guide §Hero Moment originally described a "resolving face" thermal-imaging variant that has not been built and is not on the v2 roadmap).
 
 ### Section header pattern
 

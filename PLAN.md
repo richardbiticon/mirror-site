@@ -1,254 +1,337 @@
-# Mirror Website — Build Plan
+# Mirror v2 Rebuild Plan
 
-**Author:** Claude Code
-**Date:** 2026-04-25
-**Status:** Draft, awaiting confirmation before Phase 1
-**Sources:** `docs/mirror-website-build-brief.md`, `docs/01-company-charter.md`, `docs/00-glossary.md`, `docs/02-brand-guide.md`
-
----
-
-## 1. What I Understood
-
-Mirror sells private AI clones of a company's highest-value customer segment. The site is a precision sales surface, not a content site. Its single job is to get a $5M-$200M founder or marketing exec to book a 20-minute Diagnostic Call within 90 seconds of landing.
-
-The build is a four-to-five-page marketing site plus a working demo (`/`, `/demo`, `/method`, `/pricing`, `/book`, plus `/manifesto`, `/privacy`, `/terms`, custom 404). Tonight's goal: a production-ready v1 deployed to Vercel.
-
-**The priority order for any decision** (from the brief): brand-guide.md, then charter.md, then the brief, then ask Richard. Brand guide wins ties.
-
-**The thing this site must not look like:** a generic 2026 AI startup. No purple gradients. No Spline 3D. No Inter. No glassmorphism. No three-icon feature grids. No bouncy scroll cascades. No customer-logo carousels. Aesthetic reference is intelligence-grade software (Linear, Anthropic, Palantir, Bloomberg, Arc, Vercel) with one ounce of weirdness.
-
-**The brand in one line:** an intelligence agency that hires designers from Berlin. Surveillance-grade minimalism with one moment of strangeness per surface. Slow animations (600-800ms), few of them, all respecting `prefers-reduced-motion`.
+**Author:** Claude Code (Opus, Phases 1 + 1.5)
+**Date:** 2026-04-27
+**Status:** Phase 1 + Phase 1.5 complete. All 16 open questions answered by Richard. Foundation docs updated. Awaiting Phase 1.5 sign-off, then `/clear` and Phase 2.
+**Supersedes:** the v1 PLAN.md (kept in git history at commit 6a2ee19).
+**Authority:** /docs/mirror-rebuild-brief-v2.md is the constitution for this rebuild. Priority order on conflict: that brief, then 02-brand-guide.md, then 01-company-charter.md, then ask Richard.
 
 ---
 
-## 2. Locked Constraints (non-negotiable)
+## 1. What changed in v2, in one paragraph
 
-**Stack:** Next.js 14 App Router + TypeScript, Tailwind v4, Motion (not framer-motion), shadcn/ui primitives only (always restyled before use), Lucide icons (1.5px stroke), Cal.com embed, Plausible, Resend. No other libraries without asking.
-
-**Colors:** Void `#0A0A0B`, Bone `#F4F2EE`, Smoke `#1A1A1D`, Ash `#6B6B70`, Signal `#00FF9D`. Warning `#FFB000`, Error `#FF3B30`. No purple, no pink, no pastels, no `#FFFFFF`, no `#000000`, no multi-color background gradients, no arbitrary Tailwind values like `bg-[#abc]`.
-
-**Type:** Berkeley Mono (or JetBrains Mono fallback) for display. Geist for body. Self-hosted, preloaded, `font-display: swap`. Never Inter.
-
-**Type scale (locked):** Display XL 72/0.95/-0.03em, Display L 56/1.0/-0.02em, H1 44/1.05/-0.02em, H2 32/1.1/-0.01em, H3 22/1.3/0, Eyebrow 12 (caps, 0.12em tracking), Body L 18/1.6, Body 16/1.6, Body S 14/1.5, Caption 12/1.4. No italics, no serif, no all-caps headlines.
-
-**Spacing scale (locked):** 4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192. Section rhythm: 128 desktop, 64 mobile. No arbitrary values.
-
-**Easing:** `cubic-bezier(0.16, 1, 0.3, 1)`.
-
-**Performance budget:** Lighthouse 90+, LCP < 2.5s on 4G, CLS < 0.05, total weight < 1.5MB on home, no render-blocking scripts.
-
-**Accessibility:** WCAG AA, full keyboard nav, `prefers-reduced-motion` honoured everywhere, focus rings (Signal, 2px outline, 4px offset), real labels on inputs.
-
-**Voice rules (from glossary):** No em dashes, ever. Use "Mirror/Recon, Mirror/Install, Mirror/Operate" in that exact order. Never "the Recon," "the build," "AI agent," "AI-powered," "leverage" as a verb, "synergy," "innovative," "cutting-edge." Numbers under ten written out except in pricing/stats/dates. Diagnostic Call (capitalized), never "discovery call."
+Mirror v1 sold "a private AI clone of your customer" with the homepage hero `Talk to your customer. Before you sell to them.` That metaphor doesn't survive a CFO conversation. v2 repositions Mirror as a **decision engine for marketing teams**, anchors every claim to four falsifiable outcomes (faster decisions, cheaper tests, sharper briefs, compounding asset), tightens the three guarantees so they're contract-level instead of vibes, and adds one new product surface called **Pre-Test**: a standalone tool that scores a piece of marketing copy through the multi-persona model and returns a predicted-performance score, the sharpest objection, and three ranked edits. The chat demo stays. The methodology stays. The three offers stay (Recon, Install, Operate) at the same prices. What changes is the language at every visible surface and the addition of `/pretest` as a fourth nav item with its own route, API, and result UI.
 
 ---
 
-## 3. Anti-Pattern Quarantine List (will check after every section ships)
+## 2. Current state of the codebase (post-Phase-8 of v1)
 
-From brand-guide §Anti-Patterns plus brief §1.2. After each section deploys to preview, screenshot desktop+mobile and verify *none* of these appear:
+The v1 build shipped Phases 1 through 8 across commits `eee2e8a` (foundation) through `6a2ee19` (QA). Live preview: https://mirror-site-theta.vercel.app/. Sixteen routes total. Build clean, lint clean, all anti-patterns absent.
 
-1. Purple/pink gradient backgrounds
-2. Floating 3D blobs / Spline community objects
-3. "AI brain" / neural-network iconography
-4. Customer logo carousels (greyscale or otherwise)
-5. "Trusted by" with vague logos
-6. Animated number counters used decoratively (the demo's calibration counter is the only allowed exception)
-7. Webflow-default scroll animations / cascading micro-interactions
-8. Glassmorphism / frosted glass
-9. Stock photos of people at laptops
-10. The phrase "We use AI to"
-11. Three-icon feature grid
-12. Hero video of a fake dashboard
-13. Stock-photo headshots in testimonials
-14. "How it works" with three big icons
-15. Inter
-16. Pure white background (`#FFFFFF`)
-17. Bouncing arrow CTAs
-18. Cookie banners eating screen real estate
-19. "Powered by AI" badges
-20. A railway.com clone
+**Files Richard should know exist for v2 mapping:**
 
-If anything on this list appears, that section gets rebuilt before I move on.
+```
+docs/
+├── 00-glossary.md                       (v1, unchanged)
+├── 01-company-charter.md                (v1, unchanged)
+├── 02-brand-guide.md                    (v1, unchanged)
+├── mirror-website-build-brief.md        (v1 brief, superseded for v2 conflicts)
+└── mirror-rebuild-brief-v2.md           (just placed; the v2 constitution)
 
----
+app/
+├── (marketing)/                         (route group with Nav + Footer)
+│   ├── layout.tsx
+│   ├── page.tsx                         (homepage; composes 8 home/* sections)
+│   ├── book/page.tsx
+│   ├── manifesto/page.tsx
+│   ├── method/page.tsx
+│   ├── pricing/page.tsx
+│   ├── privacy/page.tsx
+│   └── terms/page.tsx
+├── api/mirror/route.ts                  (chat SSE; stub responses pending real prompts)
+├── demo/page.tsx                        (no marketing chrome, full-viewport chat)
+├── dev/page.tsx                         (internal QA)
+├── globals.css
+├── icon.tsx                             (favicon via @vercel/og)
+├── layout.tsx                           (root: html/fonts/Plausible/skip-link)
+├── not-found.tsx                        (custom 404)
+├── opengraph-image.tsx
+├── robots.ts
+├── sitemap.ts
+└── template.tsx                         (page-transition fade)
 
-## 4. Open Questions (blockers I want resolved before Phase 1 starts)
+components/
+├── book/                                (cal-embed, what-to-expect)
+├── demo/                                (chat, top-bar, suggested-questions, etc.)
+├── hero/                                (particle-field, headline, custom-cursor)
+├── home/                                (8 homepage sections + stage-connector)
+├── layout/                              (nav, footer, coming-soon)
+├── legal/legal-page.tsx
+├── method/                              (stage-section, vertical-stage-connector)
+├── pricing/                             (4 files including pricing-data.ts)
+├── shared/final-cta.tsx
+└── ui/                                  (10 primitives: button, card, accordion, etc.)
 
-I need answers to these before, or during, Phase 1. They are blockers in roughly this priority:
+lib/
+├── demo-mirror/                         (personas + prompts + stream)
+├── design.ts
+├── use-local-storage-number.ts
+└── utils.ts
 
-**4.1 Reference doc filenames.** The brief references `/docs/charter.md`, `/docs/glossary.md`, `/docs/brand-guide.md`. The actual files are `01-company-charter.md`, `00-glossary.md`, `02-brand-guide.md`. **Recommendation:** keep the numbered names (they encode order) and update the brief + CLAUDE.md to point at the real filenames. Alternative: rename to match the brief.
-
-**4.2 Worktree vs main repo.** The `docs/` folder lives in the main repo (`C:\Users\bitic\mirror-site\docs\`), not in this worktree. Either I work in the main repo, or I copy `docs/` into the worktree first. **Recommendation:** copy `docs/` into the worktree at the start of Phase 1 so the build is self-contained and CLAUDE.md's pointers resolve.
-
-**4.3 Berkeley Mono license.** Brief §2.7 says JetBrains Mono is the v1 fallback if Berkeley Mono hasn't been purchased. **Recommendation:** ship v1 on JetBrains Mono. If you've bought Berkeley Mono, drop the woff2 files into `/public/fonts/berkeley-mono/` before Phase 1 step 3 and I'll wire it instead.
-
-**4.4 Next.js version & "this is NOT the Next.js you know."** The repo `AGENTS.md` warns the Next install in `node_modules/next/dist/docs/` has breaking changes from training-data conventions. I will read those docs before writing any Next-specific code in Phase 1 (App Router routing, route handlers, font loading, image optimization, layout/transitions). **No recommendation needed, this is just a flag.**
-
-**4.5 Cal.com event URL.** `/book` needs the real Cal.com event slug for the Diagnostic Call. **Recommendation:** create an env var `NEXT_PUBLIC_CAL_EVENT` (e.g. `richard/diagnostic-call`) and gate `/book` behind a placeholder until you provide it.
-
-**4.6 Anthropic API key for `/demo`.** Server-side only, via `ANTHROPIC_API_KEY` in Vercel env. **Recommendation:** stub the API route to return a hard-coded streamed response in v1 if the key isn't ready, so the UI can ship and you can fill the prompts later.
-
-**4.7 Demo brand name and prompts.** The brief uses `[DemoBrandName]` as a placeholder and says system prompt + 3-5 sub-persona prompts will be added later. **Recommendation:** scaffold `/lib/demo-mirror/prompts.ts` and `personas.ts` with typed empty exports plus 3 placeholder personas (LOYALIST, SKEPTIC, FORMER), and a generic placeholder system prompt that demonstrates the multi-persona voting structure. You replace later.
-
-**4.8 Demo logging store.** Brief §5.6 says Vercel KV *or* Supabase. **Recommendation:** Vercel KV. Same vendor as hosting, free tier covers v1 traffic, no extra account.
-
-**4.9 Plausible site domain.** I need the production domain to embed the script with the right `data-domain`. **Recommendation:** use `mirror.com` (or whatever domain you've registered) as a placeholder, gated behind `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`.
-
-**4.10 Resend at launch.** Brief §1.3 says "signup confirmations only at launch." There are no signup forms in the v1 IA except the Cal.com embed (which sends its own confirmations). **Recommendation:** install the Resend SDK and add an `/api/email/route.ts` stub but do not wire any sending paths in v1. Confirm.
-
-**4.11 Manifesto scope tonight.** Brief §9 says placeholder is acceptable. **Recommendation:** ship the placeholder (`MANIFESTO` eyebrow, "Coming soon." headline, link home), defer real content to v1.1.
-
-**4.12 Visible founder names.** Charter §"Open Questions" item 2 says "Richard primary, Raj supporting, currently yes." **Recommendation:** include both in the manifesto placeholder when it has real content, but neither name appears in v1 marketing copy from the brief, so no action tonight.
-
-**4.13 Production domain & SSL.** Brief Phase 9 connects production domain. **Recommendation:** confirm the domain when we get to Phase 9. Until then, ship to the default `*.vercel.app` URL.
-
-I will pause and ask if any of the recommendations above feel wrong. Otherwise I proceed with them.
+CLAUDE.md                                (v1 hard rules; needs v2 update: see open question 1)
+```
 
 ---
 
-## 5. Build Sequence (echoing brief §14, with my specific actions)
+## 3. v1-to-v2 file mapping
 
-Each phase ends in a deploy + your sign-off before the next phase starts. Bold items below are explicit "stop and show Richard" moments from the brief.
+Three categories: **survives untouched**, **needs rewrite or update**, **new for v2**.
 
-### Phase 1 — Foundation
-- Verify the existing scaffold (`app/`, `package.json`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`, `eslint.config.mjs`) and read `node_modules/next/dist/docs/` for any conventions that diverge from training data.
-- Copy `/docs/` into the worktree if we agree on §4.2.
-- Install: `motion`, `lucide-react`, `@calcom/embed-react`, `resend`, `plausible-tracker`, shadcn CLI deps. Confirm Tailwind v4 is wired (it ships with Next 14 + Tailwind v4 differently than v3 — `@theme` in CSS, not `tailwind.config.ts`).
-- Drop self-hosted JetBrains Mono + Geist into `/public/fonts/`. Wire via `next/font/local`. Preload the most-used weights.
-- Build `/app/globals.css` with: CSS variables for all brand tokens, `@theme` block, base resets, `body { background: Void }`, the grain SVG fixed-position overlay at 2-3% opacity, `prefers-reduced-motion` media-query overrides.
-- Build `/lib/design.ts` exporting tokens as TS constants (colors, spacing scale, type scale, easing, durations).
-- Replace the placeholder root `CLAUDE.md` with: anti-patterns list (the 20 from §3 above), pointers to `/docs/`, the hard rules (no purple, no Inter, no gradients, no em dashes, slow animations only), and the visual references (linear.app, anthropic.com, palantir.com, vercel.com — read structure, never copy).
-- Connect the repo to Vercel and deploy a "Hello Mirror" placeholder using the real fonts and Void background, so we can verify rendering.
+### Survives untouched (33 files)
 
-**Stop. Show: `lib/design.ts`, `app/globals.css`, the deployed placeholder URL. Confirm fonts and colors render correctly before I build anything else.**
+These don't carry user-facing copy that v2 changes, or are infrastructure that v2 doesn't touch.
 
-### Phase 2 — UI primitives
-- Install shadcn primitives: button, card, accordion, dialog, input.
-- Restyle each in `/components/ui/` to brand spec (Primary/Secondary/Ghost button variants per brand-guide §Components, sharp corners, no shadows, Smoke cards with 1px Ash 30% borders, transparent inputs with bottom-only Ash border + Signal underline on focus, Accordion with `+` rotating to `×` over 400ms).
-- Add `Container` and `Section` utility components (max-width 1280, the spacing scale, the section rhythm).
-- Build `/dev` route showing every primitive in default/hover/focus/disabled/active states. This is the QA reference for the rest of the build.
+- All ten UI primitives in `components/ui/` (button, card, accordion, dialog, input, container, section, reveal, scroll-headline + the keyframes in globals.css).
+- `components/hero/particle-field.tsx`, `custom-cursor.tsx`: pure visual.
+- `components/hero/headline.tsx`: currently hardcoded with v1 lines; could either survive with v1 lines AS A COMPONENT and have a new wrapper, or be parameterized. Recommend parameterizing in Phase 3 (single edit). Listed under "needs rewrite" below as a precaution.
+- `components/method/stage-section.tsx`, `vertical-stage-connector.tsx`, `components/home/stage-connector.tsx`: visual only.
+- `components/layout/nav.tsx`: gets one new item added in Phase 9 (PRE-TEST), otherwise unchanged.
+- `components/layout/footer.tsx`, `coming-soon.tsx`: unchanged.
+- `components/shared/final-cta.tsx`: already accepts custom lines/labels; v2 just passes new copy.
+- `components/legal/legal-page.tsx`: unchanged shell.
+- `components/pricing/comparison-table.tsx`: gets new rows passed in via data; component logic unchanged.
+- `components/pricing/pricing-faq.tsx`: gets new questions via data; component unchanged.
+- `components/pricing/pricing-tier-card.tsx`: gets new content via data; may need a new "MEASURABLE OUTCOME" block (small Phase 6 edit; see below).
+- `components/demo/chat.tsx`, `chat-input.tsx`, `message.tsx`, `data-counter.tsx`, `thinking-indicator.tsx`, `demo-shell.tsx`: Phase 8 of v2 explicitly says don't touch chat logic; only chrome and copy change.
+- All of `lib/demo-mirror/`, `lib/design.ts`, `lib/utils.ts`, `lib/use-local-storage-number.ts`.
+- `app/api/mirror/route.ts`: chat API stays.
+- `app/icon.tsx`, `app/opengraph-image.tsx`: unchanged unless OG copy gets updated to v2 phrasing (recommend yes, small change in Phase 13).
+- `app/template.tsx`, `app/globals.css`: unchanged.
+- `app/(marketing)/manifesto/page.tsx`, `privacy/page.tsx`, `terms/page.tsx`: unchanged for v2 (still placeholders or draft legal).
+- `app/(marketing)/book/page.tsx`: unchanged (no v2 changes called out).
+- `app/dev/page.tsx`, `app/not-found.tsx`: internal/edge.
 
-**Stop. Show: `/dev` route. Approve primitives.**
+### Needs rewrite or update (15 files)
 
-### Phase 3 — Layout shell
-- `components/layout/nav.tsx` (desktop 64px + mobile 56px hamburger overlay, Berkeley Mono 12px caps, sticky behaviour with the 200ms scrolled-state transition).
-- `components/layout/footer.tsx` (single row desktop, stacked mobile, the "MIRROR/M1 ONLINE" Signal pulse on the right).
-- `components/layout/page-transition.tsx` (200ms fade-out, route change, 200ms fade-in via Motion + App Router).
-- Wire into `/app/layout.tsx`. Verify on two placeholder pages.
+Each entry: file → what changes → which v2 phase covers it.
 
-**Stop. Test mobile. Approve.**
+| File | Change | Phase |
+|------|--------|-------|
+| `app/(marketing)/page.tsx` | Insert two new sections (Pre-Test feature, Outcomes) into the homepage stack | 4 + 12 |
+| `components/home/hero-section.tsx` | New eyebrow, three-line headline, new subhead, CTA labels, below-CTA caption | 3 |
+| `components/hero/headline.tsx` | Either parameterize or hardcode v2 lines. Recommend parameterizing so /pricing and /method final CTAs and the hero all share one mechanism. | 3 |
+| `components/home/proof-section.tsx` | New eyebrow, headline, subhead, two-CTA pair (`RUN A PRE-TEST` + `OPEN THE CHAT DEMO`) | 3 |
+| `components/home/what-mirror-is-section.tsx` | New copy: "A decision engine, not a chatbot." plus rewritten body | 4 |
+| `components/home/who-its-for-section.tsx` | Reframed checklist (5 items, decisions-first) | 4 |
+| `components/home/tiers-preview-section.tsx` | Updated descriptions and inclusions per v2 brief Phase 4 | 4 |
+| `components/home/methodology-preview-section.tsx` | New eyebrow text, "decision engine" headline, reframed stage one-liners | 5 |
+| `components/home/faq-section.tsx` | Eight rewritten Q&As (one new question on Pre-Test, others reframed) | 5 |
+| `components/home/final-cta-section.tsx` | New three-line headline | 5 |
+| `app/(marketing)/pricing/page.tsx` | Header copy + tier card "MEASURABLE OUTCOME" block + new comparison rows + new FAQ + new final CTA | 6 |
+| `components/pricing/pricing-tier-card.tsx` | Add a "MEASURABLE OUTCOME" block at the bottom of each card | 6 |
+| `components/pricing/pricing-data.ts` | Replace tier inclusions/exclusions/best-fors/guarantees + replace 6 FAQ items + add 2 comparison rows (Pre-Test access, Measurable outcome guarantee) | 6 |
+| `app/(marketing)/method/page.tsx` | Header copy, four stage descriptions, final CTA | 7 |
+| `app/demo/page.tsx` | Pass new top-bar/empty-state/suggested-questions/sidebar copy through; leave chat logic alone | 8 |
+| `components/demo/top-bar.tsx` | Add `TRY PRE-TEST INSTEAD` button before `Book a call` | 8 |
+| `components/demo/suggested-questions.tsx` | Six new questions, new sidebar bottom caption + new ghost CTA | 8 |
+| `components/demo/chat.tsx` | Soft-prompt and hard-limit copy and CTAs (rewrite the inner SoftLimitPrompt + HardLimitPanel sub-components) | 8 |
+| `components/layout/nav.tsx` | Add `PRE-TEST` as fourth nav item, both desktop and mobile overlay | 9 |
 
-### Phase 4 — Homepage
-The make-or-break work. Built in two halves with a checkpoint between.
+### New for v2 (~14 files)
 
-**Half A — the hero:**
-- `components/hero/particle-field.tsx` — canvas, 80-120 particles desktop / 40 mobile, 2px Signal dots, drift 0.2-0.4 px/frame, lines under 80px distance scaled-opacity Signal at max 30%, cursor as repelling particle within 120px on desktop only, 60% Void overlay between canvas and type, 30fps cap desktop / 24fps mobile, static field for `prefers-reduced-motion`.
-- `components/hero/headline.tsx` — character-by-character entrance, 30ms stagger, total 1200ms.
-- `components/hero/custom-cursor.tsx` — homepage hero only, 12px Signal outline circle, 200ms ease-out trail, expands to 24px filled at 30% on hover over interactive elements, disabled on touch + `prefers-reduced-motion`.
-- `components/home/hero-section.tsx` wiring it all together with the locked copy from brief §4.2.2.
-- Test desktop, mobile, reduced-motion.
-
-**Stop. Show the hero. Brief calls this "the make-or-break section."**
-
-**Half B — the rest of the homepage, in order:**
-- 4.3 Proof section (Smoke bg, 60/40 split desktop, faux chat preview with 12s loop and Signal pulse).
-- 4.4 What Mirror Is (centered headline, 760px max width, three short paragraphs, no icons, no columns).
-- 4.5 Who It's For (50/50 split, headline + 5-item Lucide-check list).
-- 4.6 Tiers Preview (three Smoke cards, "MOST CHOSEN" eyebrow on Mirror/Install, locked content from §4.6.3).
-- 4.7 Methodology Preview (four-stage horizontal timeline desktop, vertical mobile, dotted Ash connector with the 8s Signal-dot animation looping).
-- 4.8 FAQ (Accordion, 8 locked items from §4.8.2).
-- 4.9 Final CTA (192px vertical padding, oversized Display XL 3-line headline character-animated, oversized button).
-- Wire into `/app/page.tsx` with the locked 128/64 spacing.
-
-**Stop. Deploy. Screenshot desktop + mobile. Run §3 anti-pattern checklist. Fix before continuing.**
-
-### Phase 5 — `/demo`
-- Page layout with minimal 48px top bar (Mirror wordmark + status indicator with the 1,243-data-points counter animating up over 30s on first visit then static, "BOOK A CALL" small primary button).
-- Suggested-questions sidebar (280px desktop, 6 ghost buttons with Signal-on-hover border, the placeholder caption).
-- Chat interface (right-aligned Smoke user messages, left-aligned Mirror messages with Berkeley Mono, sub-persona eyebrow above each Mirror response, "3 OF 5 PERSONAS AGREE" voting indicator fading in after the response, "[ + SHOW REASONING ]" toggle).
-- Sticky input bar with thinking indicator + "MIRROR IS THINKING" caption.
-- `/app/api/mirror/route.ts` — Anthropic streaming via SSE, configurable system prompt + 3-5 sub-persona prompts.
-- `/lib/demo-mirror/prompts.ts` and `personas.ts` with placeholder content per §4.7.
-- Rate limiting via localStorage (10 cap, soft prompt at 5, hard block at 10).
-- Vercel KV logging (timestamp, question, response, anonymous session id).
-- Empty state with the pulsing thinking dot.
-
-**Stop. Have Richard try the demo. Iterate before locking.**
-
-### Phase 6 — `/pricing`, `/method`, `/book`
-- `/pricing` — three full tier cards (Recon, Install, Operate) with What's Included / What's Not / Best For / Guarantee / `START [TIER]` button passing `?tier=` to `/book`. Comparison table with locked rows from §6.4. Pricing-FAQ Accordion with 5-6 items (placeholder answers with TODO comments for Richard).
-- `/method` — four detailed stages (Ingest / Calibrate / Install / Operate, locked content from §7.4) with the Signal-dot dropping down the dotted Ash connector between stages.
-- `/book` — Cal.com inline embed with brand theme overrides, "WHAT TO EXPECT" 4-item numbered list below.
-
-**Stop. Cross-link from homepage. Verify routing and transitions.**
-
-### Phase 7 — Legal & edge
-- `/privacy` and `/terms` with generated content (Termly or similar) styled to brand.
-- `/manifesto` placeholder ("Coming soon.").
-- `not-found.tsx` (404) with the locked copy and the lower-density 40-particle field.
-- OG images, favicon, meta tags per route.
-- `sitemap.xml`, `robots.txt`.
-
-### Phase 8 — QA
-- Lighthouse audit each page, fix anything below 90.
-- `prefers-reduced-motion` test on every page.
-- Keyboard-nav every interactive element.
-- Real-device test: iOS Safari, Android Chrome.
-- End-to-end Cal.com booking (book a real test slot, cancel).
-- 10 different prompt types against the demo Mirror.
-- Verify all internal/external link targets.
-
-### Phase 9 — Launch prep
-- Connect production domain, verify SSL, set up www→apex and http→https.
-- Plausible live with real domain.
-- Resend domain verification (even if no sends in v1).
-- Final Lighthouse pass on production URL.
-- Hand back to Richard for final approval.
+| File | Purpose | Phase |
+|------|---------|-------|
+| `lib/copy/home.ts` | Homepage copy as exported constants (extracted in Phase 3, expanded in 4, 5, 12) | 3 |
+| `components/home/pretest-feature-section.tsx` | The new "Pre-test your creative" homepage section | 4 |
+| `components/home/outcomes-section.tsx` | The four-outcome 2x2 grid | 12 |
+| `components/home/mirror-reports-preview.tsx` | The Mirror Reports preview block | 12 |
+| `app/(marketing)/pretest/page.tsx` | The /pretest route | 9 |
+| `components/pretest/pretest-input-form.tsx` | Form scaffold (9), real impl (10), final tweaks (11) | 9-11 |
+| `components/pretest/pretest-empty-state.tsx` | Empty state | 9 |
+| `components/pretest/pretest-results.tsx` | Results container | 9-11 |
+| `components/pretest/pretest-score-display.tsx` | Score + confidence range | 11 |
+| `components/pretest/pretest-persona-reactions.tsx` | Reactions list | 11 |
+| `components/pretest/pretest-sharpest-objection.tsx` | Single quote | 11 |
+| `components/pretest/pretest-suggested-edits.tsx` | Three ranked edits | 11 |
+| `components/pretest/pretest-export-button.tsx` | PDF export trigger | 11 |
+| `components/pretest/pretest-thinking.tsx` | Loading state | 10 |
+| `lib/pretest/types.ts` | TS interfaces | 9 |
+| `lib/pretest/client.ts` | Client SSE consumer | 10 |
+| `lib/pretest/prompts.ts` | System prompt for Pre-Test | 10-11 |
+| `lib/pretest/export-pdf.ts` | PDF generation logic | 11 |
+| `app/api/pretest/route.ts` | The Pre-Test API endpoint | 10 |
+| `CHANGE-MANIFEST.md` | Phase 2 audit output | 2 |
+| `V2-LAUNCH-REPORT.md` | Phase 13 final report | 13 |
 
 ---
 
-## 6. Decisions I Will Make Without Asking
+## 4. Risks I see in the v2 plan
 
-Per brief §15, within brand constraints:
-- Tailwind class arrangements
-- Component file naming inside `/components/`
-- TS variable / type / interface names
-- Animation timing within stated ranges (e.g. 600-800ms)
-- Particle counts within stated ranges (80-120 desktop, 40 mobile)
-- Spacing within the locked scale
-- Whether to extract a sub-component
-- Internal API route structure for the demo
-- Server vs Client Components (default to Server unless interactivity needed)
+**R1. Liquid Death personas don't exist yet.** Pre-Test (Phases 9-11) is spec'd to run on the same personas the chat demo uses. The chat currently uses three placeholder personas (LOYALIST, SKEPTIC, FORMER) because Richard's note in PLAN.md §4.7 said real Liquid Death personas would arrive "before Phase 5" of v1, and they didn't. v2 brief Phase 11 implies Liquid Death personas are wired. They are not. Pre-Test will ship on the same placeholder personas unless they arrive. Open question 2 below.
 
-## 7. Decisions I Will *Not* Make Without Asking
+**R2. CLAUDE.md is v1.** Loaded into every Claude Code session by default. It still references "v1 hard rules" and the original five forbidden phrases without the v2 additions. If unchanged, future Claude sessions will produce v1 framing on autopilot, drift back to "clone of your customer," and miss the four new banned phrases. Open question 1.
 
-Per brief §16:
-- New libraries
-- Color, font, spacing, copy changes from locked values
-- Build sequence deviations
-- New sections / pages / features
-- Removal of any locked section / page / feature
-- Visual reference substitutions
-- Any anti-pattern, "just for this one case"
+**R3. The glossary, charter, and brand guide still use v1 framing.** The glossary entry for "Mirror (the product)" literally says "AI clone of a client's highest-value customer segment." The charter §What Mirror Is leads with "private AI clones." The brand guide §Application Examples shows the v1 hero `Talk to your customer.` as the LOCKED reference. The v2 brief overrides all three via priority order, but every Claude session reads these docs and gets v1 framing first. Open questions 3-5.
 
----
+**R4. Path drift between v2 brief and current code.** Brief Phase 6 references `/lib/pricing-data.ts`; actual path is `/components/pricing/pricing-data.ts`. Brief Phase 8 references `/app/(marketing)/demo/page.tsx`; actual path is `/app/demo/page.tsx` (kept outside the marketing route group on purpose because /demo has its own no-nav chrome). Need a ruling: follow brief paths verbatim (and move files), or treat brief paths as approximate (and use the existing structure). Open question 7.
 
-## 8. Risks I'm Watching
+**R5. /pretest placement under (marketing).** Brief Phase 9 places `/pretest` inside the marketing route group, which means it inherits Nav + Footer. That's appropriate for a public marketing tool that wants the standard chrome. But Pre-Test result rendering may want maximum vertical space (full results card sequence is tall). Confirm Pre-Test should ship under standard nav/footer rather than its own minimal chrome like /demo. Open question 8.
 
-- **Tailwind v4 + shadcn/ui compatibility.** v4's CSS-first config and `@theme` block changes how shadcn defaults are themed. I'll verify on the `/dev` route in Phase 2 before building any pages.
-- **Berkeley Mono fallback feel.** JetBrains Mono is wider and slightly less editorial than Berkeley Mono. The Display XL hero may feel different. Reviewable at the Phase 1 stop.
-- **Particle field performance budget.** Brief caps CPU under 5% at 30fps. If we miss, mobile drops to 24fps + 40 particles, and worst case the field becomes static on low-end devices via a `navigator.hardwareConcurrency` heuristic.
-- **`/demo` cost.** Anthropic API cost per visitor with a 10-message cap and no auth could be exploited. The 10/session localStorage cap is bypassable by clearing storage. Phase 5 should add a short-lived cookie + IP rate limit on the route handler. Flagging as a v1.1 hardening item, not a launch blocker.
-- **Cal.com theming limits.** The embed accepts color overrides but not full custom typography. The `/book` page may have a typography seam between our Berkeley/Geist and Cal.com's defaults. I'll mitigate with generous spacing around the embed.
-- **`AGENTS.md` warning about Next.js conventions diverging from training data.** I will read `node_modules/next/dist/docs/` in Phase 1 step 1 before writing any `app/` routing, route handlers, font loading, or transitions. If a brief instruction conflicts with the actual Next docs in this repo, the Next docs win and I'll surface the conflict.
+**R6. The 90-day Install guarantee is contract-level.** "Within 90 days of Install completion, your team will report at least one of: 30% reduction in creative test costs, 40% reduction in campaign rework, or a measurable lift on a Mirror-pre-tested campaign vs. control. If none, the next 3 months of retainer are free." This is a $19,500 commitment ($6,500 × 3) per Install client per missed quarter. If the methodology hasn't been validated against these specific metrics yet, this could become expensive. Open question 11.
+
+**R7. Outcomes section numbers without engagements.** Phase 12 surfaces four outcome cards with specific numbers (`30 MIN`, `30-50%`, `40%+`, `+18%`). Brief frames them as "what Mirror is engineered to deliver" and adds an honest footnote. The CFO test cuts both ways: the numbers are concrete (good) but if there are zero engagements yet, a sharp prospect will ask "measured against what?" The footnote `MEASURED ACROSS ACTIVE MIRROR/INSTALL AND OPERATE ENGAGEMENTS. NUMBERS UPDATE QUARTERLY.` is fine if engagements exist; it's misleading if they don't. Open question 12.
+
+**R8. Mirror Reports preview shows fake titles.** Phase 12 lists three fake-but-plausible Mirror Report titles with dates. Brief calls this out explicitly: "placeholder until real reports exist." A skeptical visitor following the `READ THE LATEST →` link expecting an essay and landing on the manifesto placeholder may feel misled. Recommend either the section is held until one real Mirror Report exists, or the link goes to a `/mirror-reports` index that says "publishing weekly starting [date]." Open question 13.
+
+**R9. PDF export library installation.** Phase 11 uses `@react-pdf/renderer` (preferred) or `jsPDF` (fallback). Both are fairly heavy (~200-400KB minified). Brief says "if installation needed, ask Richard first." Open question 9.
+
+**R10. Pre-Test rate limit at 3 free runs is aggressive.** Brief Phase 11 caps at 3 per session via localStorage with no time-based reset. A first-time visitor exploring will use them quickly. Compared to chat demo's 10-message limit, 3 feels stingy. The intent (drive booking) is right; the number may be too low. Open question 14.
+
+**R11. Brand guide §Hero Moment specifies a "resolving face" thermal-imaging visual for the homepage.** What we shipped in v1 is a particle field with cursor repulsion (which the brand guide later allows under "the cursor disturbs the particles when it moves nearby"). v2 brief doesn't change the visual. The brand guide still describes the unbuilt "thermal imaging readout of a person who isn't quite there": flagging because if v2 wants to actually build that, it's a Phase-3-or-later cost and the brief doesn't include it. Recommend keeping the current particle field; it satisfies the cursor-repulsion spec.
+
+**R12. Two homepage section insertions, both into the same file.** Phase 4 adds Pre-Test feature section between What-Mirror-Is and Who-It's-For. Phase 12 adds Outcomes section between Pre-Test and Who-It's-For. Both edits target `/app/(marketing)/page.tsx`. Phase 12 must read what Phase 4 actually shipped before inserting. Mitigated by clear phase boundaries; flagging to track.
 
 ---
 
-## 9. What I'd Like You To Confirm Before Phase 1
+## 5. Open questions: ALL ANSWERED
 
-Reading the questions in §4 and the recommendations there, please reply with any of:
-- "Proceed with all recommendations" (fastest)
-- Specific overrides ("4.3: Berkeley Mono is bought, here's the woff2", "4.5: Cal.com slug is X", etc.)
-- "Stop, I want to discuss N first"
+Richard's answers received. Decisions captured below; full answer text preserved in conversation history. Phase 1.5 was the work of executing these decisions across CLAUDE.md, the three reference docs, and the v2 brief itself.
 
-I will not start Phase 1 until you confirm.
+| # | Question | Decision |
+|---|----------|----------|
+| 1 | CLAUDE.md update timing | Phase 1.5: bundle with Q3, Q4, Q5 into one foundation-doc update phase. Done. |
+| 2 | Liquid Death personas | Pre-Test ships on placeholders. LD swap is one file change later. |
+| 3 | Glossary "Mirror (the product)" entry | Updated to v2 Decision Engine framing. Done. |
+| 4 | Charter §What Mirror Is + §Mirror/Operate | Both updated to v2 framing. Founding story tweaked too (banned phrase). One-sentence description rewritten. Three guarantees updated to v2 forms. Done. |
+| 5 | Brand guide updates | §Application Examples updated to v2 hero. §Forbidden Phrases expanded from 5 to 9. Headline-style example updated. Done. |
+| 6 | Liquid Death demo build doc | Richard dropping into /docs/. Not present at end of Phase 1.5. **Phase 2 must verify presence and stop if missing.** |
+| 7 | /demo file path | Keep at `/app/demo/page.tsx`. Brief path is approximate. |
+| 8 | /pretest chrome | Standard chrome (Nav + Footer) inside `(marketing)/`. |
+| 9 | PDF library | Install `@react-pdf/renderer` when Phase 11 begins. |
+| 10 | Pricing data file path | Keep at `/components/pricing/pricing-data.ts`. |
+| 11 | Install guarantee | SOFTENED. Replaced "next 3 months retainer free" with "extend Operate at no charge until you do." Updated everywhere in v2 brief (§4, Phase 5 FAQ, Phase 6 MEASURABLE OUTCOME block, Phase 6 FAQ) and in charter §The Three Offers. v2.1 reintroduces a harder dollar-back form once the methodology is validated. |
+| 12 | Outcomes footnote | Reframed honestly: `TARGETS ENGINEERED INTO MIRROR'S METHODOLOGY. ACTUAL RESULTS REPORTED PER ENGAGEMENT STARTING Q3 2026.` Numbers stay. |
+| 13 | Mirror Reports preview | HELD until one real Mirror Report is publishable. Cut from Phase 12 entirely. v2.1 candidate. |
+| 14 | Pre-Test free-tier limit | 5 runs per session (override from brief's 3). Brief Phase 11 + Phase 9 spec updated. |
+| 15 | Eyebrow style | `MIRROR · DECISION ENGINE` (middle dot). Confirmed. |
+| 16 | v1 PLAN.md overwrite | Confirmed. v1 preserved at commit 6a2ee19. |
+
+---
+
+## 5b. Original open questions (preserved for reference)
+
+**1. CLAUDE.md update timing.** The current CLAUDE.md is v1. Should I include CLAUDE.md updates in Phase 2 (the audit), or carve out a Phase 1.5 to update it before Phase 2 starts? Recommendation: carve out a Phase 1.5 (small, ~10K tokens) that updates CLAUDE.md with the v2 hard rules, the four new banned phrases, the four locked outcomes summary, and a pointer to the v2 brief. Otherwise every future Claude session re-reads v1 rules first.
+
+**2. Liquid Death personas and prompts.** They were promised before v1 Phase 5, never arrived, v1 demo shipped on three placeholders. v2 Phase 11 spec assumes they exist for Pre-Test. Two paths: (a) Pre-Test ships on placeholders too; LD personas drop in later as a single replacement; (b) you provide LD personas before Phase 11 begins. Recommendation: (a). Pre-Test UI and API are persona-agnostic; swapping later is one file change. Confirm.
+
+**3. Glossary "Mirror (the product)" entry.** Currently reads "The custom AI clone of a client's highest-value customer segment." v2 banned phrase territory. Update to "The decision engine that runs on a calibrated multi-persona model of a client's highest-value customer segment"? Or treat as internal-only (since glossary defines technical terms, not external copy)? Recommendation: update for consistency. The glossary is loaded by every Claude session and we want it aligned.
+
+**4. Charter §What Mirror Is and §Mirror/Operate description.** Charter line 20 leads with "Mirror builds private AI clones." Charter line 92 calls Mirror "the most calibrated voice-of-customer asset in their category": both banned-phrase territory. Recommendation: update charter §What Mirror Is and §Mirror/Operate to v2 phrasing. The charter has its own amendment process ("Chair Brief, Decision Log entry, version increment"), so this is a real edit, not just a typo fix.
+
+**5. Brand guide updates.** Two areas:
+   a. §Application Examples shows the v1 hero `Talk to your customer.` as the locked reference. Update to the v2 hero `Make every customer decision...`?
+   b. §The Five Forbidden Phrases lists 5. v2 adds 4. Update the brand guide to list all 9, or keep brand guide at 5 and leave v2's additions in the brief only?
+   Recommendation for both: yes update. Same reason as 3.
+
+**6. Mirror-liquiddeath-demo-build.md.** Your Phase 1 prompt referenced this file. It does not exist anywhere on the filesystem (checked /docs/ and Downloads). Was this referenced by mistake, or is there a separate spec doc you intended to share? If it exists, paste it or drop it in /docs/ before Phase 2.
+
+**7. /demo file path.** v2 brief Phase 8 references `/app/(marketing)/demo/page.tsx`. Actual current path is `/app/demo/page.tsx` (kept outside the marketing route group in v1 Phase 5 because /demo has its own minimal top bar instead of the standard Nav+Footer chrome). Two options:
+   a. Keep `/app/demo/page.tsx` as-is. Phase 8 just edits in place. Brief path is wrong, treat as drift.
+   b. Move /demo into (marketing) group so it inherits Nav+Footer + add the standard chrome.
+   Recommendation: (a). The full-viewport chat experience is an intentional design choice that v2 Phase 8 doesn't otherwise contradict.
+
+**8. /pretest file path and chrome.** v2 brief Phase 9 places `/pretest` inside `(marketing)/`, meaning it gets Nav + Footer. Confirm: standard chrome is what we want, not a /demo-style minimal shell. Recommendation: confirm yes (standard chrome). The Pre-Test is a marketing surface, visitors arrive from the homepage, the nav is appropriate.
+
+**9. PDF library for Pre-Test export.** Install `@react-pdf/renderer` (~240KB) for the export-as-brief feature in Phase 11? Alternatives:
+   a. `@react-pdf/renderer` (preferred, declarative, browser + server)
+   b. `jsPDF` (~190KB, imperative, browser only)
+   c. Server-render to HTML, browser prints to PDF (zero new deps, slightly worse UX)
+   d. Print stylesheet + browser native print (zero deps, no separate file)
+   Recommendation: (a). Brief specifies it as preferred and it gives the cleanest brand-styled PDF. Confirm.
+
+**10. Pricing data file path.** v2 brief Phase 6 references `/lib/pricing-data.ts`. Actual path is `/components/pricing/pricing-data.ts`. Move to `/lib/pricing-data.ts` to match brief, or keep where it is? Recommendation: keep where it is. Pricing data is tightly coupled to the pricing components and lives well next to them. Brief path is approximate.
+
+**11. Install guarantee commitment.** v2 brief Section 4: "If none [of the three measurable outcomes hit by day 90 post-Install], your next 3 months of retainer are free" = $19,500 per missed-target client. Has the methodology been validated against these specific metrics on at least one cohort, or is this an aspirational guarantee that could become expensive if the methodology under-delivers? This is yours to decide; flagging because it's a contract-level promise that ships in v2 marketing.
+
+**12. Outcomes section numbers without engagements.** Phase 12 surfaces `30 MIN`, `30-50%`, `40%+`, `+18%`. Footnote: `MEASURED ACROSS ACTIVE MIRROR/INSTALL AND OPERATE ENGAGEMENTS. NUMBERS UPDATE QUARTERLY.` If the active-engagements count is currently zero, the footnote misleads. Two options:
+   a. Ship the section with framing: "Numbers Mirror is engineered to deliver" or similar, with a clearer footnote.
+   b. Hold the Outcomes section until at least one engagement reports actuals, then ship it in a v2.1.
+   Recommendation: (a). The numbers come from your methodology design, not from imagined client wins. Reframing the footnote is honest and keeps the section.
+
+**13. Mirror Reports preview.** Phase 12 lists three placeholder Mirror Report titles (the Costco DTC margin one, etc.) with a `READ THE LATEST →` link. Where does that link go? Brief says "/manifesto for now; real publishing comes later." A visitor expecting an essay landing on `Coming soon.` will feel misled. Options:
+   a. Ship Mirror Reports preview as-is, link to /manifesto. Risk: feels broken.
+   b. Ship Mirror Reports preview, link goes to a new `/mirror-reports` index page that says "Publishing weekly starting [date]" plus an email signup.
+   c. Hold the Mirror Reports preview until one real Mirror Report exists and is publishable.
+   Recommendation: (c). Social proof that doesn't deliver is anti-proof. The Outcomes section alone is enough to carry Phase 12.
+
+**14. Pre-Test free-tier limit.** Brief Phase 11 caps at 3 per session. Compared to chat demo's 10-message cap, this is tight. Three runs is barely enough to test 1 ad + 1 email + 1 landing page. Recommendation: 5 runs per session. Keeps "scarce" feeling, less risk of bouncing curious prospects. Confirm or override.
+
+**15. Eyebrow style for v2 hero.** Brief says `MIRROR · DECISION ENGINE` (middle dot). v1 hero used `MIRROR / M1` (slash). Glossary says client Mirrors are versioned `Mirror/[ClientShortName][Version]` (slash). The slash is reserved for the product/version naming convention; the middle dot for caps separators in eyebrows and labels. v2 brief is consistent with this distinction. No change needed; flagging because Phase 3 should use `·` exactly as the brief says.
+
+**16. v1 PLAN.md.** Currently lives at `/PLAN.md`. This file you are reading replaces it. The v1 PLAN is preserved at commit `6a2ee19`. Confirm OK to overwrite.
+
+---
+
+## 6. Phase-by-phase readiness (updated post-Phase-1.5)
+
+| Phase | Ready to start? | Notes |
+|-------|----------------|-------|
+| 1 | DONE | Initial PLAN.md written |
+| 1.5 | DONE | Foundation docs updated: CLAUDE.md, glossary, charter, brand guide. Brief revisions B/C/D applied. |
+| 2 | After Phase 1.5 deploy + Richard sign-off + LD doc presence | Audit now has clean v2 docs to cross-reference. **Phase 2 must verify `/docs/mirror-liquiddeath-demo-build.md` presence and stop if missing.** |
+| 3 | After Phase 2 sign-off | Hero + Proof rewrite |
+| 4 | After Phase 3 sign-off | Middle sections + Pre-Test feature section |
+| 5 | After Phase 4 sign-off | Closing sections |
+| 6 | After Phase 5 sign-off | Pricing rebuild with softer Install guarantee per Q11 |
+| 7 | After 1 |: |
+| 8 | After 1, 7 | Path decision for /demo |
+| 9 | After 1, 8 | /pretest placement decision |
+| 10 | After 9 |: |
+| 7 | After Phase 6 sign-off | Method reframe |
+| 8 | After Phase 7 sign-off | /demo chrome rewrite (path stays at `/app/demo/page.tsx` per Q7) |
+| 9 | After Phase 8 sign-off | /pretest scaffold + nav update. Standard chrome per Q8. |
+| 10 | After Phase 9 sign-off | Pre-Test API + form |
+| 11 | After Phase 10 sign-off | Pre-Test results + export. Install `@react-pdf/renderer` at start. 5-run cap per Q14. Personas remain placeholders per Q2. |
+| 12 | After Phase 11 sign-off | Outcomes section only (Mirror Reports held per Q13). Honest footnote per Q12. |
+| 13 | After Phase 12 sign-off | QA + launch report |
+
+---
+
+## 7. What I will not do without explicit approval
+
+Per v2 brief Section 9 plus my own judgment given the scope:
+
+- Touch any file outside the explicit Phase scope.
+- Add any library not in package.json (`@react-pdf/renderer`, anything else).
+- Modify the glossary, charter, or brand guide unless you explicitly approve in question 3, 4, or 5.
+- Move existing files (the /demo path and pricing-data.ts location) unless you confirm in question 7 or 10.
+- Skip the stop-and-approve gate at the end of any phase.
+- Chain phases inside one session.
+
+End of Phase 1.
+
+---
+
+## 8. Phase 1.5 changelog
+
+Phase 1.5 added per Richard's directive after his Q1 answer. Goal: clean foundation docs of v1 framing before any source-code rewrites begin. Single deploy, single approval, `/clear` after.
+
+**Files touched (no source code; only docs and instructions):**
+
+- `CLAUDE.md`: full rewrite. New first-line framing: "Mirror is a private decision engine for marketing teams." Reading order updated to lead with v2 brief. Four locked outcomes summary added. Hard rules expanded to include the four v2 voice rules. The "Five Forbidden Phrases" section is now "Nine." Anti-pattern list extended with four v2-specific drift risks. Tech stack notes `@react-pdf/renderer` as approved-for-Phase-11.
+- `/docs/00-glossary.md`: bumped to v2. "Mirror (the product)" entry rewritten to lead with "decision engine." Banned phrases noted in the entry itself.
+- `/docs/01-company-charter.md`: bumped to v2. §What Mirror Is rewritten. §The One-Sentence Description replaced with v2 form. §Mirror/Operate description updated. All three §Three Offers guarantees updated to v2 forms (Recon: 30%+ improvement decisions; Install: softer extend-into-Operate per Q11; Operate: two-miss exit clause). §Founding Story rewritten to drop "talk to your customer" and "clone a customer" phrasing.
+- `/docs/02-brand-guide.md`: bumped to v2. §The Five Forbidden Phrases is now §The Nine Forbidden Phrases. §Headline Style example updated. §Application Examples / Homepage hero updated to v2 locked structure (eyebrow `MIRROR · DECISION ENGINE`, three-line headline, new subhead, new CTAs, Pre-Test framing).
+- `/docs/mirror-rebuild-brief-v2.md`: three revisions per Richard's B/C/D directives:
+  - **§4** Mirror/Install guarantee softened to "extend Operate at no charge until you do" per Q11. Phase 5 FAQ #8, Phase 6 MEASURABLE OUTCOME block, and Phase 6 FAQ #2 all updated to match.
+  - **Phase 11** Pre-Test free-tier cap changed from 3 to 5 per Q14. All references swept (5 places).
+  - **Phase 12** Mirror Reports preview removed entirely per Q13. Outcomes footnote reframed per Q12 to: `TARGETS ENGINEERED INTO MIRROR'S METHODOLOGY. ACTUAL RESULTS REPORTED PER ENGAGEMENT STARTING Q3 2026.` Phase title shortened to "Outcomes Section."
+
+**Files NOT touched (verified):** all of `/app/`, `/components/`, `/lib/`. No source-code edits in Phase 1.5.
+
+**Build status:** no source change, no rebuild required. Will run `npm run build` as a sanity check before commit.
+
+**Liquid Death doc still missing.** `/docs/mirror-liquiddeath-demo-build.md` is not present at end of Phase 1.5. Richard said he is dropping it in. Phase 2 must verify presence and stop if missing.
+
+---
+
+## 9. Stop instruction
+
+Phase 1 + Phase 1.5 complete. CLAUDE.md, glossary, charter, brand guide, and v2 brief all updated to v2 framing. PLAN.md updated. All 16 questions answered.
+
+Awaiting:
+1. Richard's deploy of the Phase 1.5 commit and visual confirmation that no source-side regressions slipped in.
+2. Drop `/docs/mirror-liquiddeath-demo-build.md` into /docs/ before Phase 2.
+3. `/clear` before Phase 2 begins.
+
+Phase 2 will: walk every file with user-facing strings, produce `/CHANGE-MANIFEST.md` mapping every line of v1 copy to its v2 phase, flag drift risks, list new files needed.

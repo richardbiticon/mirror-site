@@ -1,9 +1,11 @@
 # 01 — Company Charter
 
 **Owner:** Richard
-**Version:** v1
-**Last updated:** 2026-04-25
+**Version:** v2
+**Last updated:** 2026-04-27
 **Status:** Locked. Changes require a Chair Brief and Decision Log entry.
+
+**v2 changelog:** Repositioning per /docs/mirror-rebuild-brief-v2.md. §What Mirror Is and §Mirror/Operate description updated to v2 Decision Engine framing. The one-sentence description in §The One-Sentence Description is updated to a v2 form. Pricing and offers unchanged. Guarantees updated to match the v2 brief Section 4 (notably Mirror/Install moves from a 3-month-retainer-back guarantee to a service-extension guarantee per Phase 1 PLAN.md Q11). v1 charter preserved at git commit 6a2ee19.
 
 ---
 
@@ -17,9 +19,9 @@ When this document is changed, every Project's knowledge base must be refreshed 
 
 ## What Mirror Is
 
-Mirror builds private AI clones of a company's highest-value customer segments, calibrated on their data, deployed in their stack, and owned by them.
+Mirror is a private decision engine for marketing teams. It runs on a calibrated multi-persona model of a company's highest-value customer segment, deployed in their stack, owned by them.
 
-Companies use their Mirror to pre-test ads, emails, offers, landing pages, and pricing against the customer who actually pays them. They run focus groups at 3am. They brief their teams with insight no agency can match. They make decisions faster and with less risk.
+Companies use their Mirror to pre-test ads, emails, offers, landing pages, and pricing before they ship. They brief their teams from the engine's outputs. They compress customer-related decisions from 3-7 days to under 30 minutes. The engine compounds: every decision the team makes feeds it, every Mirror that gets used gets sharper.
 
 Mirror is sold as three offers: Mirror/Recon (a 14-day diagnostic), Mirror/Install (a 60-day build with monthly retainer), and Mirror/Operate (fully operated by us, monthly).
 
@@ -27,7 +29,7 @@ Mirror is sold as three offers: Mirror/Recon (a 14-day diagnostic), Mirror/Insta
 
 ## The One-Sentence Description
 
-*Mirror builds you a private AI clone of your best customer, so you can sell to them before you sell to anyone else.*
+*Mirror is a private decision engine for marketing teams. Pre-test your creative, brief your team, and ship campaigns with measurable confidence.*
 
 This sentence is the master version. Every other description (homepage, deck, bio, outbound) is a variation of this. If a description drifts from this idea, the description is wrong, not this sentence.
 
@@ -75,7 +77,7 @@ Founder for tier 1 and tier 3. Head of Marketing or CMO for tier 2. Never a juni
 **Duration:** 14 days from kickoff to delivery.
 **Deliverable:** A lightweight Mirror built from public and lightly-shared data, plus the Truth Report (20 pages of synthesized customer insight), plus a 60-minute live session where the client interviews their own Mirror.
 **Purpose:** Low-friction yes that demonstrates the methodology and converts to Mirror/Install at 30%+ rate.
-**Guarantee:** If the client doesn't get at least 3 actionable insights they didn't have before, full refund.
+**Guarantee:** If we don't deliver at least 3 specific decisions the client can make this quarter with a 30%+ predicted improvement in outcome, full refund of $4,500. (v2 form per /docs/mirror-rebuild-brief-v2.md §4.)
 
 ### Mirror/Install
 
@@ -83,15 +85,15 @@ Founder for tier 1 and tier 3. Head of Marketing or CMO for tier 2. Never a juni
 **Duration:** 60 days to deploy, then ongoing.
 **Deliverable:** A fully calibrated Mirror with the client's CRM, sales calls, support tickets, reviews, and 8 first-party customer interviews ingested. Custom-branded interface. Multi-persona architecture. Weekly Mirror Reports. Unlimited team access.
 **Purpose:** The bread and butter offer. Most clients live here.
-**Guarantee:** If we don't deliver a calibrated Mirror by day 60, the build fee is refunded and the retainer doesn't start.
+**Guarantee (v2 form):** If by day 90 post-Install the client's team hasn't measurably improved on at least one of the four locked outcomes (faster decisions, cheaper tests, sharper briefs, compounding asset), we extend the engagement into Operate at no additional charge until they do. (Underlying delivery commitment: a calibrated Mirror is delivered by day 60 of Install or the build fee is refunded and the retainer doesn't start; this v1 build-delivery promise is preserved as a process baseline.)
 
 ### Mirror/Operate
 
 **Price:** $15,000 to $25,000 per month, scoped to client.
 **Duration:** Quarterly engagements, ongoing.
-**Deliverable:** Mirror/Install, plus we operate it. Daily use of Mirror to pre-test campaigns. Briefs to the client's agency or team. A monthly Strategic Foresight document. Effectively a fractional CMO whose superpower is owning the most calibrated voice-of-customer asset in their category.
+**Deliverable:** Mirror/Install, plus we operate it. Daily use of Mirror to pre-test campaigns. Briefs to the client's agency or team. A monthly Strategic Foresight document. Effectively a fractional CMO whose superpower is operating the most calibrated decision engine in the client's category.
 **Purpose:** Highest-leverage tier for clients doing $20M+ who don't have internal AI capability and want us in the seat.
-**Guarantee:** Quarterly KPI agreement. If we miss, next quarter is at 50%.
+**Guarantee (v2 form):** Quarterly KPI agreement set in writing at start of each quarter. If we miss the agreed KPIs, next quarter is at 50%. Two consecutive misses, full quarter refund and clean exit.
 
 ---
 
@@ -142,9 +144,9 @@ These are actively being deliberated and may change. Current as of 2026-04-25:
 
 ## The Founding Story (90 words)
 
-We built Mirror because we got tired of watching companies make million-dollar decisions based on what they hoped their customer wanted. AI finally made it possible to clone a customer. Not a generic persona. A calibrated, multi-persona, data-grounded clone you can talk to, test against, and learn from. We built it for ourselves first, then realized every company we knew needed one. So we made it the company.
+We built Mirror because we got tired of watching companies make million-dollar decisions based on what they hoped their customer wanted. AI finally made it possible to build a calibrated, multi-persona, data-grounded engine that could score a piece of marketing copy, surface the sharpest objection, and brief a team in minutes instead of months. We built it for ourselves first, then realized every company we knew needed one. So we made it the company.
 
-Two founders. Eight AI roles. One thesis: companies that can talk to their customer before they sell to them will win the next decade.
+Two founders. Eight AI roles. One thesis: companies that can pre-test every customer-facing decision will win the next decade.
 
 ---
 

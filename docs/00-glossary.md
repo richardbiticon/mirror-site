@@ -1,9 +1,11 @@
 # 00 — Glossary
 
 **Owner:** Richard
-**Version:** v1
-**Last updated:** 2026-04-25
+**Version:** v2
+**Last updated:** 2026-04-27
 **Status:** Locked. Changes require a Decision Log entry.
+
+**v2 changelog:** Repositioning per /docs/mirror-rebuild-brief-v2.md. The Mirror (the product) entry is updated from "AI clone of a client's customer segment" to "decision engine that runs on a calibrated multi-persona model." All four banned phrases from the v2 brief Section 3 are reflected in the brand guide §Forbidden Phrases. v1 framing preserved at git commit 6a2ee19.
 
 ---
 
@@ -19,7 +21,7 @@ This exists because language drift is the first thing that breaks an AI-augmente
 
 **Mirror** — The company name. Always capitalized as "Mirror" in body copy. Rendered as "MIRROR" only in display typography (logo, headlines). Never "mirror.ai" in prose unless referring to the domain.
 
-**Mirror (the product)** — The custom AI clone of a client's highest-value customer segment. When ambiguous, refer to it as "a Mirror" (one client's instance) or "the Mirror platform" (the company's underlying methodology). Never "the Mirror tool" or "the Mirror app."
+**Mirror (the product)** — The decision engine that runs on a calibrated multi-persona model of a client's highest-value customer segment. Used to pre-test creative, brief teams, and ship campaigns with measurable confidence. When ambiguous, refer to it as "a Mirror" (one client's instance) or "the Mirror platform" (the company's underlying methodology). Never "the Mirror tool" or "the Mirror app." Never "AI clone" or "voice of customer" in external copy (banned per /docs/mirror-rebuild-brief-v2.md §3).
 
 **The Council** — The internal operating system of eight AI roles that Mirror is run through. External-facing only when telling our founding story. Internally, used constantly.
 

@@ -85,7 +85,9 @@ v1 guarantees were soft. v2 guarantees are concrete and tied to the four outcome
 *If we don't deliver at least 3 specific decisions you can make this quarter with a 30%+ predicted improvement in outcome, full refund of $4,500.*
 
 **Mirror/Install guarantee:**
-*Within 90 days of Install completion, your team will report at least one of: 30% reduction in creative test costs, 40% reduction in campaign rework, or a measurable lift on a Mirror-pre-tested campaign vs. control. If none, the next 3 months of retainer are free.*
+*If by day 90 your team hasn't measurably improved on at least one of the four outcomes, we extend Operate at no charge until you do.*
+
+(Note: v2 ships with this softer service-extension form per the Phase 1 PLAN.md Q11 decision. v2.1 will reintroduce a harder dollar-back form once at least one client cohort has validated the methodology against the four outcomes.)
 
 **Mirror/Operate guarantee:**
 *Quarterly KPI agreement set in writing at start of each quarter. If we miss the agreed KPIs, next quarter is at 50%. Two consecutive misses, full quarter refund and clean exit.*
@@ -126,8 +128,8 @@ Pre-Test transforms Mirror from a passive consultation tool into an active decis
 - For real client engagements (post-launch), Pre-Test runs on the client's calibrated personas
 
 **The free tier (for the public demo):**
-- 3 Pre-Tests per visitor per session (localStorage)
-- After 3, soft prompt to book a call
+- 5 Pre-Tests per visitor per session (localStorage). v2 ships with 5; Richard's PLAN.md Q14 override of the original brief's 3.
+- After 5, soft prompt to book a call
 - Each Pre-Test logged for sales intelligence
 
 ## 6. The New Site Structure
@@ -462,7 +464,7 @@ A: That's usually when Mirror is most valuable. The narrower your ICP, the harde
 A: That's how most clients enter. Recon is the diagnostic. Install is the build. Operate is when you want our team in the seat with you.
 
 8. **Q: What does the guarantee actually cover?**
-A: Mirror/Recon: refund if you don't get 3 decisions with 30%+ predicted improvement. Mirror/Install: 90 days to see measurable outcome (creative cost down 30%, rework down 40%, or campaign lift) or 3 months retainer free. Mirror/Operate: quarterly KPI agreement, miss it and next quarter is half price.
+A: Mirror/Recon: refund if you don't get 3 decisions with 30%+ predicted improvement. Mirror/Install: 90 days to see measurable improvement on at least one of the four outcomes; if none, we extend the engagement into Operate at no charge until you do. Mirror/Operate: quarterly KPI agreement, miss it and next quarter is half price.
 
 ### Final CTA section
 Headline:
@@ -559,7 +561,7 @@ BEST FOR:
 Companies that want a calibrated decision engine they own outright and operate themselves with monthly retraining.
 
 MEASURABLE OUTCOME:
-Within 90 days of Install, your team reports at least one of: 30% reduction in creative test costs, 40% reduction in campaign rework, or measurable Mirror-pre-tested campaign lift. If none, the next 3 months of retainer are free. 12-month minimum on the retainer.
+If by day 90 your team hasn't measurably improved on at least one of the four outcomes (faster decisions, cheaper tests, sharper briefs, compounding asset), we extend the engagement into Operate at no additional charge until you do. 12-month minimum on the retainer.
 
 **Mirror/Operate — FROM $15,000/MO, QUARTERLY ENGAGEMENTS**
 
@@ -602,7 +604,7 @@ Replace the v1 FAQ with these 6 (locked):
 A: Pre-Test is included in every tier. Recon includes 10 runs; Install is unlimited for your team; Operate is unlimited and we run them for you. There's no per-Pre-Test fee.
 
 2. **Q: What does the 90-day outcome guarantee on Install actually cover?**
-A: One of three measurable outcomes: 30% reduction in creative test costs, 40% reduction in campaign rework, or a measurable lift on a Mirror-pre-tested campaign vs. control. We define the measurement methodology with you in writing during Install. If none of the three are met by day 90 post-Install, your next 3 months of retainer are free.
+A: Measurable improvement on at least one of the four outcomes: faster decisions, cheaper tests, sharper briefs, or compounding-asset accuracy. We define the measurement methodology with you in writing during Install. If none of the four show measurable movement by day 90 post-Install, we extend the engagement into Operate at no additional charge until they do.
 
 3. **Q: What happens after the 12-month minimum on Install?**
 A: Month-to-month from there. Cancel with 30 days notice. The Mirror stays yours either way.
@@ -822,7 +824,7 @@ Headline: Pre-test a piece of copy.
           Get back a score, an objection, and three edits.
 Subhead: This Pre-Test runs against the same multi-persona model the chat demo uses.
          Your real Pre-Test would run against your calibrated personas.
-         3 free runs per session.
+         5 free runs per session.
 
 [Pre-Test input form component — scaffolded]
 [Pre-Test results component — scaffolded, hidden by default]
@@ -945,7 +947,7 @@ Centered in the form area:
 ## PHASE 11: Pre-Test Feature - Results, Scoring, Export, Rate Limiting
 
 **Model:** Sonnet.
-**Goal:** Build the full results UI (score with confidence range, persona reactions, sharpest objection, suggested edits), the export-as-brief feature, and the rate limiting (3 per session). Also: write the real Pre-Test system prompt and wire it into the API.
+**Goal:** Build the full results UI (score with confidence range, persona reactions, sharpest objection, suggested edits), the export-as-brief feature, and the rate limiting (5 per session). Also: write the real Pre-Test system prompt and wire it into the API.
 **Scope:** Results UI, export, rate limiting, real prompt.
 **Files in scope:**
 - `/components/pretest/pretest-results.tsx` (full implementation)
@@ -957,7 +959,7 @@ Centered in the form area:
 - New: `/lib/pretest/export-pdf.ts` (PDF generation using @react-pdf/renderer or similar; if installation needed, ask Richard first)
 - Update: `/lib/pretest/prompts.ts` with the real system prompt
 - Update: `/app/api/pretest/route.ts` to call the real prompt (and to fall back to placeholder if no ANTHROPIC_API_KEY)
-- New: rate limiting via localStorage (3 per session, then prompt to book a call)
+- New: rate limiting via localStorage (5 per session, then prompt to book a call)
 
 **The results UI spec:**
 
@@ -1010,9 +1012,9 @@ SUGGESTED EDITS (RANKED BY PREDICTED IMPACT)
 
 **The rate limiting:**
 - localStorage key: `mirror_pretest_count`
-- Max 3 per session
+- Max 5 per session
 - Counter increments on successful submit
-- After 3rd: form replaces with a soft wall: "You've used your 3 free Pre-Tests. Book a call to see Pre-Test on your real data."
+- After 5th: form replaces with a soft wall: "You've used your 5 free Pre-Tests. Book a call to see Pre-Test on your real data."
 - Reset only on clearing localStorage (no time-based reset for simplicity)
 
 **The real Pre-Test system prompt (to be wired in /lib/pretest/prompts.ts):**
@@ -1034,7 +1036,7 @@ This prompt instructs Claude to:
 - Export PDF works
 - Rate limiting active
 
-**Approval criteria:** Richard runs 3 Pre-Tests with different inputs, sees results render properly each time, exports a PDF, hits the rate limit on the 4th attempt.
+**Approval criteria:** Richard runs 5 Pre-Tests with different inputs, sees results render properly each time, exports a PDF, hits the rate limit on the 6th attempt.
 **Token estimate:** 50-70K tokens. This is the heaviest phase. If context fills past 60% mid-phase, run /compact.
 
 **Stop instruction:**
@@ -1042,17 +1044,18 @@ This prompt instructs Claude to:
 
 ---
 
-## PHASE 12: Outcomes Section and Social Proof
+## PHASE 12: Outcomes Section
 
 **Model:** Sonnet.
-**Goal:** Add a new "Outcomes" section to the homepage that surfaces the four locked outcomes with sample numbers (since we have no clients yet, these are framed as "what Mirror is engineered to deliver"). Add a Mirror Reports preview as new social proof.
-**Scope:** New homepage section, new component for outcomes display.
+**Goal:** Add a new "Outcomes" section to the homepage that surfaces the four locked outcomes with engineered targets and an honest footnote about measurement.
+**Scope:** New homepage section.
 **Files in scope:**
 - New: `/components/home/outcomes-section.tsx`
-- New: `/components/home/mirror-reports-preview.tsx`
 - Update: `/app/(marketing)/page.tsx` to insert outcomes section between Pre-Test feature and Who-it's-for
 - Update: `/lib/copy/home.ts`
 **Files NOT in scope:** Other homepage sections, other pages.
+
+(Note: the original v2 brief also called for a Mirror Reports preview block in this phase. Per Richard's PLAN.md Q13 decision, that block is held until at least one real Mirror Report is publishable. It will return in v2.1. Phase 12 v2 ships the Outcomes section alone.)
 
 **Outcomes section spec (locked):**
 
@@ -1084,35 +1087,17 @@ Card 4:
 COMPOUNDING ASSET
 Average accuracy improvement after 90 days of use.
 
-Below the cards, a small caption:
-`MEASURED ACROSS ACTIVE MIRROR/INSTALL AND OPERATE ENGAGEMENTS. NUMBERS UPDATE QUARTERLY.`
-
-(Note: until we have real engagement data, these are the targets the methodology is engineered for. The footnote is honest framing.)
-
-**Mirror Reports preview spec:**
-
-Below the outcomes, a small Mirror Reports preview block:
-
-Eyebrow: `MIRROR REPORTS`
-Headline: `Read what Mirror is learning.`
-Body: `Every week, Mirror's team publishes a Mirror Report: a real customer truth surfaced from a real engagement. No client names. Just the insight.`
-
-Below: a list of 3 fake-but-plausible Mirror Report titles with dates (placeholder until real reports exist):
-- `2026-04-23 · The pricing line every loyalist quietly hates.`
-- `2026-04-16 · What sober-curious buyers say in private that they never review publicly.`
-- `2026-04-09 · The Costco SKU that kills your DTC margin and you can't see it.`
-
-Below the list: ghost button `READ THE LATEST →` (links to /manifesto for now; real publishing comes later)
+Below the cards, a small caption (Richard's PLAN.md Q12 reframing for honesty before any engagements have reported actuals):
+`TARGETS ENGINEERED INTO MIRROR'S METHODOLOGY. ACTUAL RESULTS REPORTED PER ENGAGEMENT STARTING Q3 2026.`
 
 **Output:**
 - Outcomes section rendered between Pre-Test and Who-it's-for
-- Mirror Reports preview rendered below outcomes
 
-**Approval criteria:** Richard reads the outcomes section, confirms the numbers feel concrete and the footnote keeps it honest. Confirms Mirror Reports adds proof without being fake testimonials.
-**Token estimate:** 30-45K tokens.
+**Approval criteria:** Richard reads the outcomes section, confirms the numbers feel concrete and the footnote stays honest about pre-engagement state.
+**Token estimate:** 25-35K tokens.
 
 **Stop instruction:**
-"Phase 12 complete. Outcomes and Mirror Reports preview added to homepage. Run /clear before Phase 13."
+"Phase 12 complete. Outcomes section added to homepage. Mirror Reports preview held for v2.1 per Q13. Run /clear before Phase 13."
 
 ---
 
