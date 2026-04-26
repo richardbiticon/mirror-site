@@ -2,15 +2,37 @@ import { useMemo, useState } from "react";
 import { LeadList } from "./components/LeadList";
 import { AddLeadForm } from "./components/AddLeadForm";
 import { StageFilter, type StageFilterValue } from "./components/StageFilter";
+import { ConvertLeadForm } from "./components/ConvertLeadForm";
+import { ProjectList } from "./components/ProjectList";
 import { useLeads } from "./hooks/useLeads";
+import { useProjects } from "./hooks/useProjects";
 import { formatPhp } from "./lib/format";
-import { STAGES } from "./lib/stages";
-import type { LeadStage } from "./types";
+import type { Lead, LeadStage } from "./types";
+
+type Tab = "leads" | "projects";
 
 export default function App() {
-  const { leads, addLead, updateStage, resetToSeed } = useLeads();
+  const { leads, addLead, updateStage, resetToSeed: resetLeads } = useLeads();
+  const {
+    projects,
+    convertLead,
+    updateStatus,
+    updateProgress,
+    resetToSeed: resetProjects,
+  } = useProjects();
+
+  const [tab, setTab] = useState<Tab>("leads");
   const [filter, setFilter] = useState<StageFilterValue>("all");
   const [showForm, setShowForm] = useState(false);
+  const [convertingLead, setConvertingLead] = useState<Lead | null>(null);
+
+  const convertedLeadIds = useMemo(
+    () =>
+      new Set(
+        projects.map((p) => p.leadId).filter((id): id is string => Boolean(id))
+      ),
+    [projects]
+  );
 
   const counts = useMemo(() => {
     const base: Record<StageFilterValue, number> = {
@@ -35,10 +57,17 @@ export default function App() {
     .filter((l) => l.stage !== "lost")
     .reduce((sum, l) => sum + l.estimatedValuePhp, 0);
 
-  const activeCount = leads.filter(
+  const activeLeadCount = leads.filter(
     (l) => l.stage !== "won" && l.stage !== "lost"
   ).length;
-  const wonCount = counts.won;
+
+  const activeProjectsValue = projects
+    .filter((p) => p.status !== "cancelled")
+    .reduce((sum, p) => sum + p.contractValuePhp, 0);
+
+  const activeProjectsCount = projects.filter(
+    (p) => p.status === "planning" || p.status === "in_progress"
+  ).length;
 
   return (
     <div className="min-h-full">
@@ -56,67 +85,178 @@ export default function App() {
             <button
               type="button"
               onClick={() => {
-                if (confirm("Reset all leads to sample data?")) resetToSeed();
+                if (
+                  confirm(
+                    "Reset all leads and projects to sample data? This cannot be undone."
+                  )
+                ) {
+                  resetLeads();
+                  resetProjects();
+                }
               }}
               className="rounded border border-slate-800 px-3 py-1.5 text-xs uppercase tracking-wide text-slate-400 hover:bg-slate-900"
             >
               Reset
             </button>
-            <button
-              type="button"
-              onClick={() => setShowForm((v) => !v)}
-              className="rounded bg-sky-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-sky-500"
-            >
-              {showForm ? "Close" : "+ Add Lead"}
-            </button>
           </div>
+        </div>
+
+        <div className="mx-auto flex max-w-6xl gap-1 px-6">
+          <TabButton
+            active={tab === "leads"}
+            onClick={() => setTab("leads")}
+            label="Leads"
+            count={leads.length}
+          />
+          <TabButton
+            active={tab === "projects"}
+            onClick={() => setTab("projects")}
+            label="Projects"
+            count={projects.length}
+          />
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-8">
-        <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Stat label="Active Leads" value={String(activeCount)} />
-          <Stat label="Won" value={String(wonCount)} />
-          <Stat label="Pipeline Value" value={formatPhp(totalPipeline)} />
-        </section>
+        {tab === "leads" ? (
+          <>
+            <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Stat label="Active Leads" value={String(activeLeadCount)} />
+              <Stat label="Won" value={String(counts.won)} />
+              <Stat label="Pipeline Value" value={formatPhp(totalPipeline)} />
+            </section>
 
-        {showForm && (
-          <section className="mb-8">
-            <AddLeadForm
-              onSubmit={(input) => {
-                addLead(input);
+            <section className="mb-6 flex items-center justify-between">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+                Leads
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForm((v) => !v);
+                  setConvertingLead(null);
+                }}
+                className="rounded bg-sky-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-sky-500"
+              >
+                {showForm ? "Close" : "+ Add Lead"}
+              </button>
+            </section>
+
+            {showForm && (
+              <section className="mb-8">
+                <AddLeadForm
+                  onSubmit={(input) => {
+                    addLead(input);
+                    setShowForm(false);
+                  }}
+                  onCancel={() => setShowForm(false)}
+                />
+              </section>
+            )}
+
+            {convertingLead && (
+              <section className="mb-8">
+                <ConvertLeadForm
+                  lead={convertingLead}
+                  onSubmit={(input) => {
+                    convertLead(convertingLead, input);
+                    setConvertingLead(null);
+                    setTab("projects");
+                  }}
+                  onCancel={() => setConvertingLead(null)}
+                />
+              </section>
+            )}
+
+            <div className="mb-4">
+              <StageFilter
+                value={filter}
+                onChange={setFilter}
+                counts={counts}
+              />
+            </div>
+
+            <div className="mb-3 text-xs text-slate-500">
+              {visibleLeads.length} of {leads.length}
+            </div>
+
+            <LeadList
+              leads={visibleLeads}
+              convertedLeadIds={convertedLeadIds}
+              onStageChange={(id, stage: LeadStage) => updateStage(id, stage)}
+              onConvert={(lead) => {
+                setConvertingLead(lead);
                 setShowForm(false);
               }}
-              onCancel={() => setShowForm(false)}
             />
-          </section>
+          </>
+        ) : (
+          <>
+            <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Stat
+                label="Active Projects"
+                value={String(activeProjectsCount)}
+              />
+              <Stat
+                label="Total Projects"
+                value={String(projects.length)}
+              />
+              <Stat
+                label="Contract Value"
+                value={formatPhp(activeProjectsValue)}
+              />
+            </section>
+
+            <section className="mb-3 flex items-baseline justify-between">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+                Projects
+              </h2>
+              <span className="text-xs text-slate-500">
+                {projects.length} total
+              </span>
+            </section>
+
+            <ProjectList
+              projects={projects}
+              onStatusChange={updateStatus}
+              onProgressChange={updateProgress}
+            />
+          </>
         )}
 
-        <section>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
-              Leads
-            </h2>
-            <span className="text-xs text-slate-500">
-              {visibleLeads.length} of {leads.length}
-            </span>
-          </div>
-
-          <div className="mb-4">
-            <StageFilter value={filter} onChange={setFilter} counts={counts} />
-          </div>
-
-          <LeadList
-            leads={visibleLeads}
-            onStageChange={(id, stage: LeadStage) => updateStage(id, stage)}
-          />
-        </section>
-
         <footer className="mt-12 text-center text-xs text-slate-600">
-          Stages: {STAGES.length}. Stored locally in your browser.
+          Stored locally in your browser.
         </footer>
       </main>
     </div>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  label,
+  count,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  count: number;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={
+        "border-b-2 px-4 py-2 text-xs font-semibold uppercase tracking-wide transition " +
+        (active
+          ? "border-sky-500 text-sky-300"
+          : "border-transparent text-slate-500 hover:text-slate-300")
+      }
+    >
+      {label}
+      <span className="ml-2 font-mono text-slate-500">{count}</span>
+    </button>
   );
 }
 
