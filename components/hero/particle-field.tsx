@@ -49,7 +49,17 @@ function makeParticles(count: number, w: number, h: number): Particle[] {
   });
 }
 
-export function HeroParticleField() {
+interface HeroParticleFieldProps {
+  /** Particle count overrides. Defaults: 100 desktop, 40 mobile. */
+  count?: { desktop: number; mobile: number };
+  /** Whether the cursor repels nearby particles. Defaults to true. */
+  cursor?: boolean;
+}
+
+export function HeroParticleField({
+  count = { desktop: 100, mobile: 40 },
+  cursor = true,
+}: HeroParticleFieldProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -77,7 +87,7 @@ export function HeroParticleField() {
     };
     resize();
 
-    const targetCount = isMobile ? 40 : 100;
+    const targetCount = isMobile ? count.mobile : count.desktop;
     const particles = makeParticles(targetCount, width, height);
 
     // Cursor tracked in module ref to avoid re-renders. Bind to window so
@@ -98,7 +108,7 @@ export function HeroParticleField() {
       cursor.y = y;
       cursor.active = true;
     };
-    if (!reduced && !coarse) {
+    if (cursor && !reduced && !coarse) {
       window.addEventListener("mousemove", onMove, { passive: true });
     }
 
@@ -194,7 +204,10 @@ export function HeroParticleField() {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("mousemove", onMove);
     };
-  }, []);
+    // Props are captured by reference at mount; consumers (HeroSection,
+    // not-found) pass static config so re-running on prop change is not
+    // needed for v1.
+  }, [count.desktop, count.mobile, cursor]);
 
   return (
     <canvas
