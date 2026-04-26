@@ -1,13 +1,5 @@
 import type { LeadStage } from "../types";
-
-const STAGE_LABEL: Record<LeadStage, string> = {
-  new: "Bago",
-  contacted: "Contacted",
-  site_visit: "Site Visit",
-  quoted: "Quoted",
-  won: "Won",
-  lost: "Lost",
-};
+import { STAGE_LABEL } from "../lib/stages";
 
 const STAGE_STYLE: Record<LeadStage, string> = {
   new: "bg-slate-700 text-slate-100",

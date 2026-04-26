@@ -1,8 +1,21 @@
-import type { Lead } from "../types";
+import type { Lead, LeadStage } from "../types";
 import { formatPhp, formatDate } from "../lib/format";
-import { StageBadge } from "./StageBadge";
+import { StageSelect } from "./StageSelect";
 
-export function LeadList({ leads }: { leads: Lead[] }) {
+interface Props {
+  leads: Lead[];
+  onStageChange: (id: string, stage: LeadStage) => void;
+}
+
+export function LeadList({ leads, onStageChange }: Props) {
+  if (leads.length === 0) {
+    return (
+      <div className="rounded-lg border border-dashed border-slate-800 bg-slate-950 px-4 py-10 text-center text-sm text-slate-500">
+        No leads in this view.
+      </div>
+    );
+  }
+
   return (
     <div className="overflow-hidden rounded-lg border border-slate-800">
       <table className="w-full text-sm">
@@ -33,7 +46,10 @@ export function LeadList({ leads }: { leads: Lead[] }) {
                 {formatPhp(lead.estimatedValuePhp)}
               </td>
               <td className="px-4 py-3">
-                <StageBadge stage={lead.stage} />
+                <StageSelect
+                  value={lead.stage}
+                  onChange={(s) => onStageChange(lead.id, s)}
+                />
               </td>
               <td className="px-4 py-3 text-slate-400">
                 {formatDate(lead.updatedAt)}
