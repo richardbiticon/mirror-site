@@ -1,0 +1,65 @@
+[
+  {
+    "id": "lead_001",
+    "name": "Reyes Family",
+    "phone": "+63 917 555 0142",
+    "email": "j.reyes@example.ph",
+    "source": "Facebook Ad",
+    "projectType": "residential",
+    "estimatedValuePhp": 4800000,
+    "stage": "site_visit",
+    "notes": "Two-storey house in Antipolo. Lot already cleared.",
+    "createdAt": "2026-04-12T09:14:00+08:00",
+    "updatedAt": "2026-04-22T16:30:00+08:00"
+  },
+  {
+    "id": "lead_002",
+    "name": "Cruz Bakeshop",
+    "phone": "+63 928 555 0117",
+    "source": "Referral",
+    "projectType": "fit_out",
+    "estimatedValuePhp": 1250000,
+    "stage": "quoted",
+    "notes": "Branch fit-out in Marikina. Owner waiting on lease signing.",
+    "createdAt": "2026-04-08T11:02:00+08:00",
+    "updatedAt": "2026-04-21T10:15:00+08:00"
+  },
+  {
+    "id": "lead_003",
+    "name": "Santos, Miguel",
+    "phone": "+63 906 555 0188",
+    "email": "miguel.santos@example.ph",
+    "source": "Walk-in",
+    "projectType": "renovation",
+    "estimatedValuePhp": 680000,
+    "stage": "new",
+    "notes": "Kitchen and bathroom reno, condo in QC.",
+    "createdAt": "2026-04-24T14:48:00+08:00",
+    "updatedAt": "2026-04-24T14:48:00+08:00"
+  },
+  {
+    "id": "lead_004",
+    "name": "Lim Trading Corp",
+    "phone": "+63 915 555 0210",
+    "email": "ops@limtrading.example.ph",
+    "source": "Website",
+    "projectType": "commercial",
+    "estimatedValuePhp": 9200000,
+    "stage": "contacted",
+    "notes": "Warehouse extension, Valenzuela. Needs structural engineer.",
+    "createdAt": "2026-04-19T08:30:00+08:00",
+    "updatedAt": "2026-04-23T17:05:00+08:00"
+  },
+  {
+    "id": "lead_005",
+    "name": "Dela Pena Residence",
+    "phone": "+63 977 555 0163",
+    "source": "Referral",
+    "projectType": "residential",
+    "estimatedValuePhp": 3100000,
+    "stage": "won",
+    "notes": "Approved. Moving to project setup.",
+    "createdAt": "2026-03-30T10:00:00+08:00",
+    "updatedAt": "2026-04-20T12:20:00+08:00"
+  }
+]
