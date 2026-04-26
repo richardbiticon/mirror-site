@@ -60,7 +60,7 @@ function SectionHeader({ title, hint }: { title: string; hint?: string }) {
 
 export default function DevPage() {
   return (
-    <main className="relative z-10 pt-24 pb-32">
+    <main id="main" className="relative z-10 pt-24 pb-32">
       <Container>
         <header className="mb-24">
           <p className="text-eyebrow text-signal">DEV / REFERENCE</p>

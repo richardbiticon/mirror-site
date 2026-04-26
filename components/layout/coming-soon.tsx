@@ -26,7 +26,7 @@ export function ComingSoon({
   ctaHref = "/",
 }: ComingSoonProps) {
   return (
-    <main className="relative z-10 min-h-dvh flex items-center pt-24 pb-32">
+    <main id="main" className="relative z-10 min-h-dvh flex items-center pt-24 pb-32">
       <Container width="prose">
         <p className="text-eyebrow text-signal">{eyebrow}</p>
         <h1 className="text-display-l text-bone mt-6">{headline}</h1>

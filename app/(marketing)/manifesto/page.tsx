@@ -19,7 +19,7 @@ export const metadata: Metadata = {
  */
 export default function ManifestoPage() {
   return (
-    <main className="relative z-10 min-h-dvh flex items-center pt-24 pb-32">
+    <main id="main" className="relative z-10 min-h-dvh flex items-center pt-24 pb-32">
       <Container width="prose">
         <Reveal>
           <p className="text-eyebrow text-signal">MANIFESTO</p>

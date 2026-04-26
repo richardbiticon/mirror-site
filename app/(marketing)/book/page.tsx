@@ -23,7 +23,7 @@ const calLink = process.env.NEXT_PUBLIC_CAL_EVENT;
  */
 export default function BookPage() {
   return (
-    <main className="relative z-10 pt-24">
+    <main id="main" className="relative z-10 pt-24">
       <Section rhythm="compact">
         <Container width="book">
           <Reveal>

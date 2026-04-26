@@ -98,7 +98,7 @@ const STAGES: readonly StageContent[] = [
 
 export default function MethodPage() {
   return (
-    <main className="relative z-10 pt-24">
+    <main id="main" className="relative z-10 pt-24">
       <Section rhythm="compact">
         <Container width="prose">
           <Reveal>

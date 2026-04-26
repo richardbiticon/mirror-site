@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
   return (
-    <main className="relative z-10 pt-24">
+    <main id="main" className="relative z-10 pt-24">
       {/* Page header per brief §6.2 */}
       <Section rhythm="compact">
         <Container>

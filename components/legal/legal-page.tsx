@@ -20,7 +20,7 @@ interface Props {
 
 export function LegalPage({ eyebrow, title, lastUpdated, children }: Props) {
   return (
-    <main className="relative z-10 pt-24 pb-32">
+    <main id="main" className="relative z-10 pt-24 pb-32">
       <Container width="book">
         <Reveal>
           <p className="text-eyebrow text-signal">{eyebrow}</p>

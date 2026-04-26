@@ -15,7 +15,7 @@ interface Props {
 
 export function PricingTierCard({ tier }: Props) {
   return (
-    <div className="relative h-full">
+    <div id={tier.slug} className="relative h-full scroll-mt-24">
       {tier.featured ? (
         <p className="text-eyebrow text-signal absolute -top-6 left-0">
           MOST CHOSEN

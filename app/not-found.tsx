@@ -10,7 +10,7 @@ import { HeroParticleField } from "@/components/hero/particle-field";
  */
 export default function NotFound() {
   return (
-    <main className="relative h-dvh flex items-center overflow-hidden">
+    <main id="main" className="relative h-dvh flex items-center overflow-hidden">
       <HeroParticleField count={{ desktop: 40, mobile: 30 }} cursor={false} />
       <div
         className="absolute inset-0 z-[1] bg-void/60 pointer-events-none"

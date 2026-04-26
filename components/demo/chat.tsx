@@ -161,7 +161,7 @@ export function Chat() {
         disabled={isStreaming || atHardLimit}
       />
 
-      <div className="flex-1 flex flex-col min-h-0">
+      <main id="main" className="flex-1 flex flex-col min-h-0">
         <div
           ref={messagesContainerRef}
           className="flex-1 overflow-y-auto px-4 sm:px-6 py-8"
@@ -210,7 +210,7 @@ export function Chat() {
             }
           />
         )}
-      </div>
+      </main>
     </div>
   );
 }

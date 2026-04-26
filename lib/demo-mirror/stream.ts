@@ -41,6 +41,23 @@ export async function streamMirror(
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  let terminated = false;
+
+  // Wrap handlers so we can detect whether the server explicitly ended
+  // the stream (via "done" or "error"). If neither fires before the
+  // reader closes, we synthesize an onDone so the chat never gets stuck
+  // showing the streaming indicator after the connection has ended.
+  const wrapped: MirrorStreamHandlers = {
+    ...handlers,
+    onDone: () => {
+      terminated = true;
+      handlers.onDone();
+    },
+    onError: (msg) => {
+      terminated = true;
+      handlers.onError(msg);
+    },
+  };
 
   try {
     while (true) {
@@ -51,12 +68,13 @@ export async function streamMirror(
       const blocks = buffer.split("\n\n");
       buffer = blocks.pop() ?? "";
       for (const block of blocks) {
-        dispatchSseBlock(block, handlers);
+        dispatchSseBlock(block, wrapped);
       }
     }
-    if (buffer.trim().length > 0) dispatchSseBlock(buffer, handlers);
+    if (buffer.trim().length > 0) dispatchSseBlock(buffer, wrapped);
+    if (!terminated) handlers.onDone();
   } catch (err) {
-    if ((err as Error).name !== "AbortError") {
+    if ((err as Error).name !== "AbortError" && !terminated) {
       handlers.onError("Stream interrupted.");
     }
   }
