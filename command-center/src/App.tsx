@@ -6,8 +6,11 @@ import { ConvertLeadForm } from "./components/ConvertLeadForm";
 import { ProjectList } from "./components/ProjectList";
 import { ProjectDetail } from "./components/ProjectDetail";
 import { Dashboard } from "./components/Dashboard";
+import { SyncStatusBadge } from "./components/SyncStatusBadge";
+import { SyncSettingsForm } from "./components/SyncSettingsForm";
 import { useLeads } from "./hooks/useLeads";
 import { useProjects } from "./hooks/useProjects";
+import { useJsonbinSync } from "./hooks/useJsonbinSync";
 import { formatPhp } from "./lib/format";
 import { summarizeProjectMoney } from "./lib/milestones";
 import type { Lead, LeadStage } from "./types";
@@ -15,7 +18,13 @@ import type { Lead, LeadStage } from "./types";
 type Tab = "dashboard" | "leads" | "projects";
 
 export default function App() {
-  const { leads, addLead, updateStage, resetToSeed: resetLeads } = useLeads();
+  const {
+    leads,
+    addLead,
+    updateStage,
+    resetToSeed: resetLeads,
+    replaceAll: replaceLeads,
+  } = useLeads();
   const {
     projects,
     convertLead,
@@ -27,7 +36,15 @@ export default function App() {
     addExpense,
     deleteExpense,
     resetToSeed: resetProjects,
+    replaceAll: replaceProjects,
   } = useProjects();
+
+  const sync = useJsonbinSync({
+    leads,
+    projects,
+    replaceLeads,
+    replaceProjects,
+  });
 
   const [tab, setTab] = useState<Tab>("dashboard");
   const [filter, setFilter] = useState<StageFilterValue>("all");
@@ -36,6 +53,7 @@ export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
+  const [showSyncSettings, setShowSyncSettings] = useState(false);
 
   const selectedProject = useMemo(
     () => projects.find((p) => p.id === selectedProjectId) ?? null,
@@ -103,6 +121,11 @@ export default function App() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <SyncStatusBadge
+              status={sync.status}
+              lastSyncedAt={sync.lastSyncedAt}
+              onClick={() => setShowSyncSettings((v) => !v)}
+            />
             <button
               type="button"
               onClick={() => {
@@ -147,6 +170,23 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-8">
+        {showSyncSettings && (
+          <section className="mb-8">
+            <SyncSettingsForm
+              config={sync.config}
+              isReady={sync.isReady}
+              status={sync.status}
+              error={sync.error}
+              onInitialize={(apiKey) => sync.initializeBins(apiKey)}
+              onSaveExisting={(next) => sync.setConfig(next)}
+              onPull={sync.pull}
+              onPush={sync.push}
+              onDisable={sync.disable}
+              onClose={() => setShowSyncSettings(false)}
+            />
+          </section>
+        )}
+
         {tab === "dashboard" ? (
           <Dashboard
             leads={leads}

@@ -42,5 +42,9 @@ export function useLeads() {
     setLeads(seedLeads as Lead[]);
   }, []);
 
-  return { leads, addLead, updateStage, resetToSeed };
+  const replaceAll = useCallback((next: Lead[]) => {
+    setLeads(next);
+  }, []);
+
+  return { leads, addLead, updateStage, resetToSeed, replaceAll };
 }

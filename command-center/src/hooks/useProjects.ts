@@ -199,6 +199,10 @@ export function useProjects() {
     setProjects((seedProjects as Project[]).map(normalizeProject));
   }, []);
 
+  const replaceAll = useCallback((next: Project[]) => {
+    setProjects(next.map(normalizeProject));
+  }, []);
+
   return {
     projects,
     convertLead,
@@ -210,5 +214,6 @@ export function useProjects() {
     addExpense,
     deleteExpense,
     resetToSeed,
+    replaceAll,
   };
 }
