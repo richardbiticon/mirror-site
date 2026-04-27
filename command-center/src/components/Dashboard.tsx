@@ -7,6 +7,7 @@ import {
   type MilestoneWithProject,
 } from "../lib/dashboard";
 import { summarizeProjectMoney } from "../lib/milestones";
+import { projectMargin } from "../lib/expenses";
 import { STAGES, STAGE_LABEL } from "../lib/stages";
 
 interface Props {
@@ -29,13 +30,20 @@ export function Dashboard({
   const totals = projects.reduce(
     (acc, p) => {
       const m = summarizeProjectMoney(p);
-      acc.contract += p.status === "cancelled" ? 0 : p.contractValuePhp;
+      const margin = projectMargin(p);
+      const isLive = p.status !== "cancelled";
+      acc.contract += isLive ? p.contractValuePhp : 0;
       acc.paid += m.paid;
       acc.outstanding += m.outstanding;
+      acc.expenses += margin.expenses;
+      acc.netMargin += isLive ? margin.projectedMargin : -margin.expenses;
       return acc;
     },
-    { contract: 0, paid: 0, outstanding: 0 }
+    { contract: 0, paid: 0, outstanding: 0, expenses: 0, netMargin: 0 }
   );
+
+  const netMarginPercent =
+    totals.contract === 0 ? 0 : (totals.netMargin / totals.contract) * 100;
 
   const overdueAmount = overdue.reduce(
     (s, x) => s + x.milestone.amountPhp,
@@ -65,6 +73,21 @@ export function Dashboard({
           tone={overdueAmount > 0 ? "rose" : "muted"}
         />
         <Stat label="Total Paid" value={formatPhp(totals.paid)} tone="emerald" />
+      </section>
+
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Stat label="Project Expenses" value={formatPhp(totals.expenses)} />
+        <Stat
+          label={`Net Margin (${netMarginPercent.toFixed(0)}%)`}
+          value={formatPhp(totals.netMargin)}
+          tone={
+            totals.netMargin < 0
+              ? "rose"
+              : netMarginPercent < 15
+                ? "amber"
+                : "emerald"
+          }
+        />
       </section>
 
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">

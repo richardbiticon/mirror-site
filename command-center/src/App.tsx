@@ -24,6 +24,8 @@ export default function App() {
     addMilestone,
     updateMilestoneStatus,
     deleteMilestone,
+    addExpense,
+    deleteExpense,
     resetToSeed: resetProjects,
   } = useProjects();
 
@@ -236,6 +238,8 @@ export default function App() {
             onAddMilestone={addMilestone}
             onMilestoneStatus={updateMilestoneStatus}
             onMilestoneDelete={deleteMilestone}
+            onAddExpense={addExpense}
+            onExpenseDelete={deleteExpense}
           />
         ) : (
           <>

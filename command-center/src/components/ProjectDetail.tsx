@@ -6,11 +6,17 @@ import type {
 } from "../types";
 import { formatDate, formatPhp } from "../lib/format";
 import { summarizeProjectMoney } from "../lib/milestones";
+import { projectMargin } from "../lib/expenses";
 import { StatusSelect } from "./StatusSelect";
 import { ProgressBar } from "./ProgressBar";
 import { MilestoneList } from "./MilestoneList";
 import { AddMilestoneForm } from "./AddMilestoneForm";
-import type { NewMilestoneInput } from "../hooks/useProjects";
+import { ExpenseList } from "./ExpenseList";
+import { AddExpenseForm } from "./AddExpenseForm";
+import type {
+  NewExpenseInput,
+  NewMilestoneInput,
+} from "../hooks/useProjects";
 
 interface Props {
   project: Project;
@@ -24,6 +30,8 @@ interface Props {
     status: MilestoneStatus
   ) => void;
   onMilestoneDelete: (projectId: string, milestoneId: string) => void;
+  onAddExpense: (projectId: string, input: NewExpenseInput) => void;
+  onExpenseDelete: (projectId: string, expenseId: string) => void;
 }
 
 export function ProjectDetail({
@@ -34,13 +42,24 @@ export function ProjectDetail({
   onAddMilestone,
   onMilestoneStatus,
   onMilestoneDelete,
+  onAddExpense,
+  onExpenseDelete,
 }: Props) {
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddMilestone, setShowAddMilestone] = useState(false);
+  const [showAddExpense, setShowAddExpense] = useState(false);
   const money = summarizeProjectMoney(project);
+  const margin = projectMargin(project);
   const allocatedPercent = project.milestones.reduce(
     (s, m) => s + m.percentOfContract,
     0
   );
+
+  const marginTone =
+    margin.projectedMarginPercent < 0
+      ? "rose"
+      : margin.projectedMarginPercent < 15
+        ? "amber"
+        : "emerald";
 
   return (
     <div>
@@ -96,17 +115,22 @@ export function ProjectDetail({
         </div>
       </header>
 
-      <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <section className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <Stat label="Paid" value={formatPhp(money.paid)} tone="emerald" />
         <Stat
           label="Outstanding"
           value={formatPhp(money.outstanding)}
           tone="amber"
         />
-        <Stat label="Remaining" value={formatPhp(money.remaining)} />
+        <Stat label="Expenses" value={formatPhp(margin.expenses)} />
+        <Stat
+          label={`Margin (${margin.projectedMarginPercent.toFixed(0)}%)`}
+          value={formatPhp(margin.projectedMargin)}
+          tone={marginTone}
+        />
       </section>
 
-      <section>
+      <section className="mb-10">
         <div className="mb-3 flex items-center justify-between">
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
@@ -119,22 +143,25 @@ export function ProjectDetail({
           </div>
           <button
             type="button"
-            onClick={() => setShowAddForm((v) => !v)}
+            onClick={() => {
+              setShowAddMilestone((v) => !v);
+              setShowAddExpense(false);
+            }}
             className="rounded bg-sky-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-sky-500"
           >
-            {showAddForm ? "Close" : "+ Add Milestone"}
+            {showAddMilestone ? "Close" : "+ Add Milestone"}
           </button>
         </div>
 
-        {showAddForm && (
+        {showAddMilestone && (
           <div className="mb-4">
             <AddMilestoneForm
               project={project}
               onSubmit={(input) => {
                 onAddMilestone(project.id, input);
-                setShowAddForm(false);
+                setShowAddMilestone(false);
               }}
-              onCancel={() => setShowAddForm(false)}
+              onCancel={() => setShowAddMilestone(false)}
             />
           </div>
         )}
@@ -145,6 +172,47 @@ export function ProjectDetail({
             onMilestoneStatus(project.id, mid, status)
           }
           onDelete={(mid) => onMilestoneDelete(project.id, mid)}
+        />
+      </section>
+
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+              Expenses
+            </h3>
+            <p className="text-xs text-slate-500">
+              {project.expenses.length} entries . {formatPhp(margin.expenses)}{" "}
+              total
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddExpense((v) => !v);
+              setShowAddMilestone(false);
+            }}
+            className="rounded bg-sky-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-sky-500"
+          >
+            {showAddExpense ? "Close" : "+ Add Expense"}
+          </button>
+        </div>
+
+        {showAddExpense && (
+          <div className="mb-4">
+            <AddExpenseForm
+              onSubmit={(input) => {
+                onAddExpense(project.id, input);
+                setShowAddExpense(false);
+              }}
+              onCancel={() => setShowAddExpense(false)}
+            />
+          </div>
+        )}
+
+        <ExpenseList
+          expenses={project.expenses}
+          onDelete={(eid) => onExpenseDelete(project.id, eid)}
         />
       </section>
     </div>
@@ -158,14 +226,16 @@ function Stat({
 }: {
   label: string;
   value: string;
-  tone?: "emerald" | "amber";
+  tone?: "emerald" | "amber" | "rose";
 }) {
   const toneClass =
     tone === "emerald"
       ? "text-emerald-300"
       : tone === "amber"
         ? "text-amber-300"
-        : "text-slate-100";
+        : tone === "rose"
+          ? "text-rose-300"
+          : "text-slate-100";
   return (
     <div className="rounded-lg border border-slate-800 bg-slate-950 px-4 py-3">
       <div className="text-xs uppercase tracking-wide text-slate-500">

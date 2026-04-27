@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type {
+  Expense,
   Lead,
   Milestone,
   MilestoneStatus,
@@ -21,11 +22,13 @@ export interface ConvertLeadInput {
 }
 
 export type NewMilestoneInput = Omit<Milestone, "id">;
+export type NewExpenseInput = Omit<Expense, "id">;
 
 function normalizeProject(p: Project): Project {
   return {
     ...p,
     milestones: Array.isArray(p.milestones) ? p.milestones : [],
+    expenses: Array.isArray(p.expenses) ? p.expenses : [],
   };
 }
 
@@ -57,6 +60,7 @@ export function useProjects() {
           input.startDate,
           input.targetEndDate
         ),
+        expenses: [],
         notes: input.notes,
         createdAt: now,
         updatedAt: now,
@@ -155,6 +159,42 @@ export function useProjects() {
     []
   );
 
+  const addExpense = useCallback(
+    (projectId: string, input: NewExpenseInput) => {
+      const expense: Expense = { ...input, id: newId("exp") };
+      setProjects((prev) =>
+        prev.map((p) =>
+          p.id === projectId
+            ? {
+                ...p,
+                expenses: [expense, ...p.expenses],
+                updatedAt: new Date().toISOString(),
+              }
+            : p
+        )
+      );
+      return expense;
+    },
+    []
+  );
+
+  const deleteExpense = useCallback(
+    (projectId: string, expenseId: string) => {
+      setProjects((prev) =>
+        prev.map((p) =>
+          p.id === projectId
+            ? {
+                ...p,
+                expenses: p.expenses.filter((e) => e.id !== expenseId),
+                updatedAt: new Date().toISOString(),
+              }
+            : p
+        )
+      );
+    },
+    []
+  );
+
   const resetToSeed = useCallback(() => {
     setProjects((seedProjects as Project[]).map(normalizeProject));
   }, []);
@@ -167,6 +207,8 @@ export function useProjects() {
     addMilestone,
     updateMilestoneStatus,
     deleteMilestone,
+    addExpense,
+    deleteExpense,
     resetToSeed,
   };
 }

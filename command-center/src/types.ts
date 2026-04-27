@@ -47,6 +47,25 @@ export interface Milestone {
   notes?: string;
 }
 
+export type ExpenseCategory =
+  | "materials"
+  | "labor"
+  | "permits"
+  | "equipment"
+  | "subcontractor"
+  | "transportation"
+  | "other";
+
+export interface Expense {
+  id: string;
+  category: ExpenseCategory;
+  description: string;
+  amountPhp: number;
+  vendor?: string;
+  date: string;
+  notes?: string;
+}
+
 export interface Project {
   id: string;
   leadId?: string;
@@ -58,6 +77,7 @@ export interface Project {
   targetEndDate: string;
   progressPercent: number;
   milestones: Milestone[];
+  expenses: Expense[];
   notes?: string;
   createdAt: string;
   updatedAt: string;
