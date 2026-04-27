@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd command-center && npm install && npm run build",
+  "outputDirectory": "command-center/dist",
+  "installCommand": "echo skip-root-install",
+  "framework": null,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
