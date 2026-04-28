@@ -1,1 +1,167 @@
-[]
+[
+  {
+    "id": "proj_demo_001",
+    "leadId": "lead_005",
+    "clientName": "Dela Pena Residence",
+    "siteAddress": "14 Mahogany St, Greenfields, Antipolo, Rizal",
+    "contractValuePhp": 3100000,
+    "status": "in_progress",
+    "startDate": "2026-04-01",
+    "targetEndDate": "2026-08-15",
+    "progressPercent": 35,
+    "milestones": [
+      {
+        "id": "ms_001a",
+        "name": "Down Payment",
+        "percentOfContract": 30,
+        "amountPhp": 930000,
+        "status": "paid",
+        "dueDate": "2026-04-01",
+        "paidDate": "2026-04-02"
+      },
+      {
+        "id": "ms_001b",
+        "name": "Progress Billing 1",
+        "percentOfContract": 30,
+        "amountPhp": 930000,
+        "status": "invoiced",
+        "dueDate": "2026-05-22"
+      },
+      {
+        "id": "ms_001c",
+        "name": "Progress Billing 2",
+        "percentOfContract": 30,
+        "amountPhp": 930000,
+        "status": "pending",
+        "dueDate": "2026-07-08"
+      },
+      {
+        "id": "ms_001d",
+        "name": "Retention Release",
+        "percentOfContract": 10,
+        "amountPhp": 310000,
+        "status": "pending",
+        "dueDate": "2026-09-14"
+      }
+    ],
+    "expenses": [
+      {
+        "id": "exp_001a",
+        "category": "materials",
+        "description": "Cement (200 bags) and rebar",
+        "amountPhp": 185000,
+        "vendor": "Marikina Hardware",
+        "date": "2026-04-05"
+      },
+      {
+        "id": "exp_001b",
+        "category": "labor",
+        "description": "Foreman and crew, two-week first cycle",
+        "amountPhp": 168000,
+        "vendor": "In-house team",
+        "date": "2026-04-15"
+      },
+      {
+        "id": "exp_001c",
+        "category": "permits",
+        "description": "Building permit, Antipolo City Hall",
+        "amountPhp": 42000,
+        "date": "2026-03-28"
+      }
+    ],
+    "activities": [
+      {
+        "id": "act_001a",
+        "type": "milestone",
+        "occurredAt": "2026-04-01",
+        "summary": "Project kickoff. Down payment received.",
+        "createdAt": "2026-04-01T09:00:00+08:00"
+      },
+      {
+        "id": "act_001b",
+        "type": "delivery",
+        "occurredAt": "2026-04-05",
+        "summary": "Materials delivered: cement, rebar, sand.",
+        "details": "Marikina Hardware delivered to site at 8am. All inspected and signed for.",
+        "createdAt": "2026-04-05T08:30:00+08:00"
+      },
+      {
+        "id": "act_001c",
+        "type": "site_visit",
+        "occurredAt": "2026-04-22",
+        "summary": "Foundation poured for second floor extension.",
+        "details": "8 workers on site. Curing for next 7 days before continuing.",
+        "createdAt": "2026-04-22T17:00:00+08:00"
+      }
+    ],
+    "notes": "Two-storey extension, owner on site most weekdays.",
+    "createdAt": "2026-03-30T15:00:00+08:00",
+    "updatedAt": "2026-04-22T17:00:00+08:00"
+  },
+  {
+    "id": "proj_demo_002",
+    "leadId": "lead_006",
+    "clientName": "Tan Auto Repair",
+    "siteAddress": "98 Shaw Boulevard, Pasig City",
+    "contractValuePhp": 2400000,
+    "status": "planning",
+    "startDate": "2026-05-12",
+    "targetEndDate": "2026-08-30",
+    "progressPercent": 5,
+    "milestones": [
+      {
+        "id": "ms_002a",
+        "name": "Down Payment",
+        "percentOfContract": 30,
+        "amountPhp": 720000,
+        "status": "invoiced",
+        "dueDate": "2026-05-12"
+      },
+      {
+        "id": "ms_002b",
+        "name": "Progress Billing 1",
+        "percentOfContract": 30,
+        "amountPhp": 720000,
+        "status": "pending",
+        "dueDate": "2026-06-21"
+      },
+      {
+        "id": "ms_002c",
+        "name": "Progress Billing 2",
+        "percentOfContract": 30,
+        "amountPhp": 720000,
+        "status": "pending",
+        "dueDate": "2026-07-31"
+      },
+      {
+        "id": "ms_002d",
+        "name": "Retention Release",
+        "percentOfContract": 10,
+        "amountPhp": 240000,
+        "status": "pending",
+        "dueDate": "2026-09-29"
+      }
+    ],
+    "expenses": [],
+    "activities": [
+      {
+        "id": "act_002a",
+        "type": "client_meeting",
+        "occurredAt": "2026-03-04",
+        "summary": "Final scope agreed and contract signed.",
+        "details": "Garage extension plus full roof replacement. Owner to vacate during peak demolition week.",
+        "createdAt": "2026-03-04T13:45:00+08:00"
+      },
+      {
+        "id": "act_002b",
+        "type": "milestone",
+        "occurredAt": "2026-04-10",
+        "summary": "Permits submitted to Pasig LGU.",
+        "createdAt": "2026-04-10T11:00:00+08:00"
+      }
+    ],
+    "notes": "Working garage. Need to schedule demolition for off-hours.",
+    "createdAt": "2026-03-04T14:00:00+08:00",
+    "updatedAt": "2026-04-10T11:00:00+08:00"
+  }
+]

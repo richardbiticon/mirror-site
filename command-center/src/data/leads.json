@@ -61,5 +61,18 @@
     "notes": "Approved. Moving to project setup.",
     "createdAt": "2026-03-30T10:00:00+08:00",
     "updatedAt": "2026-04-20T12:20:00+08:00"
+  },
+  {
+    "id": "lead_006",
+    "name": "Tan Auto Repair",
+    "phone": "+63 920 555 0199",
+    "email": "shop@tanauto.example.ph",
+    "source": "Walk-in",
+    "projectType": "commercial",
+    "estimatedValuePhp": 2400000,
+    "stage": "won",
+    "notes": "Garage extension and roof replacement, Pasig.",
+    "createdAt": "2026-02-15T09:30:00+08:00",
+    "updatedAt": "2026-03-04T13:45:00+08:00"
   }
 ]
