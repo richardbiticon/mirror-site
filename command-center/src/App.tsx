@@ -9,6 +9,7 @@ import { Dashboard } from "./components/Dashboard";
 import { SyncStatusBadge } from "./components/SyncStatusBadge";
 import { SyncSettingsForm } from "./components/SyncSettingsForm";
 import { ExportPanel } from "./components/ExportPanel";
+import { SearchInput } from "./components/SearchInput";
 import { useLeads } from "./hooks/useLeads";
 import { useProjects } from "./hooks/useProjects";
 import { useJsonbinSync } from "./hooks/useJsonbinSync";
@@ -61,6 +62,8 @@ export default function App() {
   );
   const [showSyncSettings, setShowSyncSettings] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  const [leadSearch, setLeadSearch] = useState("");
+  const [projectSearch, setProjectSearch] = useState("");
 
   const selectedProject = useMemo(
     () => projects.find((p) => p.id === selectedProjectId) ?? null,
@@ -89,10 +92,41 @@ export default function App() {
     return base;
   }, [leads]);
 
-  const visibleLeads = useMemo(
-    () => (filter === "all" ? leads : leads.filter((l) => l.stage === filter)),
-    [leads, filter]
-  );
+  const visibleLeads = useMemo(() => {
+    const stageFiltered =
+      filter === "all" ? leads : leads.filter((l) => l.stage === filter);
+    const q = leadSearch.trim().toLowerCase();
+    if (!q) return stageFiltered;
+    return stageFiltered.filter((l) => {
+      const blob = [
+        l.name,
+        l.phone,
+        l.email ?? "",
+        l.source,
+        l.notes ?? "",
+        l.projectType,
+      ]
+        .join(" ")
+        .toLowerCase();
+      return blob.includes(q);
+    });
+  }, [leads, filter, leadSearch]);
+
+  const visibleProjects = useMemo(() => {
+    const q = projectSearch.trim().toLowerCase();
+    if (!q) return projects;
+    return projects.filter((p) => {
+      const blob = [
+        p.clientName,
+        p.siteAddress,
+        p.notes ?? "",
+        p.status,
+      ]
+        .join(" ")
+        .toLowerCase();
+      return blob.includes(q);
+    });
+  }, [projects, projectSearch]);
 
   const totalPipeline = leads
     .filter((l) => l.stage !== "lost")
@@ -294,6 +328,14 @@ export default function App() {
             )}
 
             <div className="mb-4">
+              <SearchInput
+                value={leadSearch}
+                onChange={setLeadSearch}
+                placeholder="Search by name, phone, email, source, notes..."
+              />
+            </div>
+
+            <div className="mb-4">
               <StageFilter
                 value={filter}
                 onChange={setFilter}
@@ -303,6 +345,7 @@ export default function App() {
 
             <div className="mb-3 text-xs text-slate-500">
               {visibleLeads.length} of {leads.length}
+              {leadSearch && ` matching "${leadSearch}"`}
             </div>
 
             <LeadList
@@ -355,12 +398,21 @@ export default function App() {
                 Projects
               </h2>
               <span className="text-xs text-slate-500">
-                {projects.length} total
+                {visibleProjects.length} of {projects.length}
+                {projectSearch && ` matching "${projectSearch}"`}
               </span>
             </section>
 
+            <div className="mb-4">
+              <SearchInput
+                value={projectSearch}
+                onChange={setProjectSearch}
+                placeholder="Search by client, site, status, notes..."
+              />
+            </div>
+
             <ProjectList
-              projects={projects}
+              projects={visibleProjects}
               onStatusChange={updateStatus}
               onProgressChange={updateProgress}
               onOpen={(id) => setSelectedProjectId(id)}

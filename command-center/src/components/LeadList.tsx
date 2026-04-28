@@ -1,6 +1,7 @@
 import type { Lead, LeadStage } from "../types";
 import { formatPhp, formatDate } from "../lib/format";
 import { StageSelect } from "./StageSelect";
+import { PhoneActions } from "./PhoneActions";
 
 interface Props {
   leads: Lead[];
@@ -51,8 +52,11 @@ export function LeadList({
                   <div className="font-medium text-slate-100">{lead.name}</div>
                   <div className="text-xs text-slate-500">{lead.source}</div>
                 </td>
-                <td className="px-4 py-3 font-mono text-slate-300">
-                  {lead.phone}
+                <td className="px-4 py-3">
+                  <PhoneActions
+                    phone={lead.phone}
+                    prefilledMessage={`Hi ${lead.name}, this is regarding your construction project inquiry.`}
+                  />
                 </td>
                 <td className="px-4 py-3 capitalize text-slate-300">
                   {lead.projectType.replace("_", " ")}
