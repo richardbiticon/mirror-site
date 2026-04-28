@@ -13,9 +13,11 @@ import { MilestoneList } from "./MilestoneList";
 import { AddMilestoneForm } from "./AddMilestoneForm";
 import { ExpenseList } from "./ExpenseList";
 import { AddExpenseForm } from "./AddExpenseForm";
+import { ProjectEditForm } from "./ProjectEditForm";
 import type {
   NewExpenseInput,
   NewMilestoneInput,
+  ProjectEditInput,
 } from "../hooks/useProjects";
 
 interface Props {
@@ -32,6 +34,8 @@ interface Props {
   onMilestoneDelete: (projectId: string, milestoneId: string) => void;
   onAddExpense: (projectId: string, input: NewExpenseInput) => void;
   onExpenseDelete: (projectId: string, expenseId: string) => void;
+  onUpdateProject: (id: string, input: ProjectEditInput) => void;
+  onDeleteProject: (id: string) => void;
 }
 
 export function ProjectDetail({
@@ -44,9 +48,12 @@ export function ProjectDetail({
   onMilestoneDelete,
   onAddExpense,
   onExpenseDelete,
+  onUpdateProject,
+  onDeleteProject,
 }: Props) {
   const [showAddMilestone, setShowAddMilestone] = useState(false);
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const money = summarizeProjectMoney(project);
   const margin = projectMargin(project);
   const allocatedPercent = project.milestones.reduce(
@@ -63,13 +70,57 @@ export function ProjectDetail({
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={onBack}
-        className="mb-4 text-xs uppercase tracking-wide text-slate-400 hover:text-slate-200"
-      >
-        &larr; Back to projects
-      </button>
+      <div className="mb-4 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={onBack}
+          className="text-xs uppercase tracking-wide text-slate-400 hover:text-slate-200"
+        >
+          &larr; Back to projects
+        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setShowEdit((v) => !v);
+              setShowAddMilestone(false);
+              setShowAddExpense(false);
+            }}
+            className="rounded border border-slate-700 px-3 py-1.5 text-xs uppercase tracking-wide text-slate-300 hover:bg-slate-900"
+          >
+            {showEdit ? "Close Edit" : "Edit"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (
+                confirm(
+                  `Delete project "${project.clientName}"? Milestones and expenses are deleted with it. The originating lead is preserved.`
+                )
+              ) {
+                onDeleteProject(project.id);
+                onBack();
+              }
+            }}
+            className="rounded border border-rose-900 px-3 py-1.5 text-xs uppercase tracking-wide text-rose-300 hover:bg-rose-950"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+
+      {showEdit && (
+        <div className="mb-6">
+          <ProjectEditForm
+            project={project}
+            onSubmit={(input) => {
+              onUpdateProject(project.id, input);
+              setShowEdit(false);
+            }}
+            onCancel={() => setShowEdit(false)}
+          />
+        </div>
+      )}
 
       <header className="mb-6 rounded-lg border border-slate-800 bg-slate-950 p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">

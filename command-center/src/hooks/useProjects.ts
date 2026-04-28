@@ -23,6 +23,15 @@ export interface ConvertLeadInput {
 
 export type NewMilestoneInput = Omit<Milestone, "id">;
 export type NewExpenseInput = Omit<Expense, "id">;
+export type ProjectEditInput = Pick<
+  Project,
+  | "clientName"
+  | "siteAddress"
+  | "contractValuePhp"
+  | "startDate"
+  | "targetEndDate"
+  | "notes"
+>;
 
 function normalizeProject(p: Project): Project {
   return {
@@ -195,6 +204,36 @@ export function useProjects() {
     []
   );
 
+  const updateProject = useCallback(
+    (id: string, input: ProjectEditInput) => {
+      setProjects((prev) =>
+        prev.map((p) => {
+          if (p.id !== id) return p;
+          const contractChanged = p.contractValuePhp !== input.contractValuePhp;
+          const milestones = contractChanged
+            ? p.milestones.map((m) => ({
+                ...m,
+                amountPhp: Math.round(
+                  input.contractValuePhp * (m.percentOfContract / 100)
+                ),
+              }))
+            : p.milestones;
+          return {
+            ...p,
+            ...input,
+            milestones,
+            updatedAt: new Date().toISOString(),
+          };
+        })
+      );
+    },
+    []
+  );
+
+  const deleteProject = useCallback((id: string) => {
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+  }, []);
+
   const resetToSeed = useCallback(() => {
     setProjects((seedProjects as Project[]).map(normalizeProject));
   }, []);
@@ -206,6 +245,8 @@ export function useProjects() {
   return {
     projects,
     convertLead,
+    updateProject,
+    deleteProject,
     updateStatus,
     updateProgress,
     addMilestone,

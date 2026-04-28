@@ -8,6 +8,7 @@ import { ProjectDetail } from "./components/ProjectDetail";
 import { Dashboard } from "./components/Dashboard";
 import { SyncStatusBadge } from "./components/SyncStatusBadge";
 import { SyncSettingsForm } from "./components/SyncSettingsForm";
+import { ExportPanel } from "./components/ExportPanel";
 import { useLeads } from "./hooks/useLeads";
 import { useProjects } from "./hooks/useProjects";
 import { useJsonbinSync } from "./hooks/useJsonbinSync";
@@ -30,6 +31,8 @@ export default function App() {
   const {
     projects,
     convertLead,
+    updateProject,
+    deleteProject,
     updateStatus,
     updateProgress,
     addMilestone,
@@ -57,6 +60,7 @@ export default function App() {
     null
   );
   const [showSyncSettings, setShowSyncSettings] = useState(false);
+  const [showExport, setShowExport] = useState(false);
 
   const selectedProject = useMemo(
     () => projects.find((p) => p.id === selectedProjectId) ?? null,
@@ -127,8 +131,21 @@ export default function App() {
             <SyncStatusBadge
               status={sync.status}
               lastSyncedAt={sync.lastSyncedAt}
-              onClick={() => setShowSyncSettings((v) => !v)}
+              onClick={() => {
+                setShowSyncSettings((v) => !v);
+                setShowExport(false);
+              }}
             />
+            <button
+              type="button"
+              onClick={() => {
+                setShowExport((v) => !v);
+                setShowSyncSettings(false);
+              }}
+              className="rounded border border-slate-800 px-3 py-1.5 text-xs uppercase tracking-wide text-slate-300 hover:bg-slate-900"
+            >
+              Export
+            </button>
             <button
               type="button"
               onClick={() => {
@@ -186,6 +203,16 @@ export default function App() {
               onPush={sync.push}
               onDisable={sync.disable}
               onClose={() => setShowSyncSettings(false)}
+            />
+          </section>
+        )}
+
+        {showExport && (
+          <section className="mb-8">
+            <ExportPanel
+              leads={leads}
+              projects={projects}
+              onClose={() => setShowExport(false)}
             />
           </section>
         )}
@@ -306,6 +333,8 @@ export default function App() {
             onMilestoneDelete={deleteMilestone}
             onAddExpense={addExpense}
             onExpenseDelete={deleteExpense}
+            onUpdateProject={updateProject}
+            onDeleteProject={deleteProject}
           />
         ) : (
           <>
