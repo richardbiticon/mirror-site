@@ -20,6 +20,8 @@ import type {
   ProjectEditInput,
 } from "../hooks/useProjects";
 
+import type { Milestone } from "../types";
+
 interface Props {
   project: Project;
   onBack: () => void;
@@ -36,6 +38,8 @@ interface Props {
   onExpenseDelete: (projectId: string, expenseId: string) => void;
   onUpdateProject: (id: string, input: ProjectEditInput) => void;
   onDeleteProject: (id: string) => void;
+  onInvoiceMilestone: (milestone: Milestone) => void;
+  onQuotation: () => void;
 }
 
 export function ProjectDetail({
@@ -50,6 +54,8 @@ export function ProjectDetail({
   onExpenseDelete,
   onUpdateProject,
   onDeleteProject,
+  onInvoiceMilestone,
+  onQuotation,
 }: Props) {
   const [showAddMilestone, setShowAddMilestone] = useState(false);
   const [showAddExpense, setShowAddExpense] = useState(false);
@@ -79,6 +85,13 @@ export function ProjectDetail({
           &larr; Back to projects
         </button>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onQuotation}
+            className="rounded border border-slate-700 px-3 py-1.5 text-xs uppercase tracking-wide text-slate-300 hover:bg-slate-900"
+          >
+            Quotation
+          </button>
           <button
             type="button"
             onClick={() => {
@@ -223,6 +236,7 @@ export function ProjectDetail({
             onMilestoneStatus(project.id, mid, status)
           }
           onDelete={(mid) => onMilestoneDelete(project.id, mid)}
+          onInvoice={onInvoiceMilestone}
         />
       </section>
 

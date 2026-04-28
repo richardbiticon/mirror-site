@@ -10,9 +10,15 @@ interface Props {
   milestones: Milestone[];
   onStatusChange: (milestoneId: string, status: MilestoneStatus) => void;
   onDelete: (milestoneId: string) => void;
+  onInvoice: (milestone: Milestone) => void;
 }
 
-export function MilestoneList({ milestones, onStatusChange, onDelete }: Props) {
+export function MilestoneList({
+  milestones,
+  onStatusChange,
+  onDelete,
+  onInvoice,
+}: Props) {
   if (milestones.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-slate-800 bg-slate-950 px-4 py-10 text-center text-sm text-slate-500">
@@ -69,17 +75,26 @@ export function MilestoneList({ milestones, onStatusChange, onDelete }: Props) {
                   ))}
                 </select>
               </td>
-              <td className="px-4 py-3 text-right">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (confirm(`Delete milestone "${m.name}"?`))
-                      onDelete(m.id);
-                  }}
-                  className="text-xs uppercase tracking-wide text-slate-500 hover:text-rose-400"
-                >
-                  Delete
-                </button>
+              <td className="px-4 py-3">
+                <div className="flex items-center justify-end gap-3 text-xs uppercase tracking-wide">
+                  <button
+                    type="button"
+                    onClick={() => onInvoice(m)}
+                    className="text-sky-400 hover:text-sky-300"
+                  >
+                    Invoice
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm(`Delete milestone "${m.name}"?`))
+                        onDelete(m.id);
+                    }}
+                    className="text-slate-500 hover:text-rose-400"
+                  >
+                    Delete
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

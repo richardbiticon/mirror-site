@@ -34,6 +34,16 @@ export interface Lead {
   updatedAt: string;
 }
 
+export interface BusinessProfile {
+  companyName: string;
+  tagline?: string;
+  address: string;
+  phone: string;
+  email: string;
+  tin?: string;
+  paymentInstructions?: string;
+}
+
 export type MilestoneStatus = "pending" | "invoiced" | "paid";
 
 export interface Milestone {

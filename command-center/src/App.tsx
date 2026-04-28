@@ -10,6 +10,11 @@ import { SyncStatusBadge } from "./components/SyncStatusBadge";
 import { SyncSettingsForm } from "./components/SyncSettingsForm";
 import { ExportPanel } from "./components/ExportPanel";
 import { SearchInput } from "./components/SearchInput";
+import { BusinessSettingsForm } from "./components/BusinessSettingsForm";
+import { PrintableDoc } from "./components/PrintableDoc";
+import { useBusinessProfile } from "./hooks/useBusinessProfile";
+import { invoiceNumber, quotationNumber } from "./lib/invoice";
+import type { Milestone } from "./types";
 import { useLeads } from "./hooks/useLeads";
 import { useProjects } from "./hooks/useProjects";
 import { useJsonbinSync } from "./hooks/useJsonbinSync";
@@ -52,6 +57,8 @@ export default function App() {
     replaceProjects,
   });
 
+  const { profile, updateProfile } = useBusinessProfile();
+
   const [tab, setTab] = useState<Tab>("dashboard");
   const [filter, setFilter] = useState<StageFilterValue>("all");
   const [showForm, setShowForm] = useState(false);
@@ -62,8 +69,14 @@ export default function App() {
   );
   const [showSyncSettings, setShowSyncSettings] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  const [showBusinessSettings, setShowBusinessSettings] = useState(false);
   const [leadSearch, setLeadSearch] = useState("");
   const [projectSearch, setProjectSearch] = useState("");
+  const [printDoc, setPrintDoc] = useState<
+    | { mode: "invoice"; projectId: string; milestone: Milestone }
+    | { mode: "quotation"; projectId: string }
+    | null
+  >(null);
 
   const selectedProject = useMemo(
     () => projects.find((p) => p.id === selectedProjectId) ?? null,
@@ -175,10 +188,22 @@ export default function App() {
               onClick={() => {
                 setShowExport((v) => !v);
                 setShowSyncSettings(false);
+                setShowBusinessSettings(false);
               }}
               className="rounded border border-slate-800 px-3 py-1.5 text-xs uppercase tracking-wide text-slate-300 hover:bg-slate-900"
             >
               Export
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowBusinessSettings((v) => !v);
+                setShowExport(false);
+                setShowSyncSettings(false);
+              }}
+              className="rounded border border-slate-800 px-3 py-1.5 text-xs uppercase tracking-wide text-slate-300 hover:bg-slate-900"
+            >
+              Business
             </button>
             <button
               type="button"
@@ -247,6 +272,16 @@ export default function App() {
               leads={leads}
               projects={projects}
               onClose={() => setShowExport(false)}
+            />
+          </section>
+        )}
+
+        {showBusinessSettings && (
+          <section className="mb-8">
+            <BusinessSettingsForm
+              profile={profile}
+              onSave={updateProfile}
+              onClose={() => setShowBusinessSettings(false)}
             />
           </section>
         )}
@@ -378,6 +413,19 @@ export default function App() {
             onExpenseDelete={deleteExpense}
             onUpdateProject={updateProject}
             onDeleteProject={deleteProject}
+            onInvoiceMilestone={(m) =>
+              setPrintDoc({
+                mode: "invoice",
+                projectId: selectedProject.id,
+                milestone: m,
+              })
+            }
+            onQuotation={() =>
+              setPrintDoc({
+                mode: "quotation",
+                projectId: selectedProject.id,
+              })
+            }
           />
         ) : (
           <>
@@ -424,6 +472,32 @@ export default function App() {
           Stored locally in your browser.
         </footer>
       </main>
+
+      {printDoc && (() => {
+        const project = projects.find((p) => p.id === printDoc.projectId);
+        if (!project) return null;
+        if (printDoc.mode === "invoice") {
+          return (
+            <PrintableDoc
+              mode="invoice"
+              profile={profile}
+              project={project}
+              milestone={printDoc.milestone}
+              documentNumber={invoiceNumber(project, printDoc.milestone)}
+              onClose={() => setPrintDoc(null)}
+            />
+          );
+        }
+        return (
+          <PrintableDoc
+            mode="quotation"
+            profile={profile}
+            project={project}
+            documentNumber={quotationNumber(project)}
+            onClose={() => setPrintDoc(null)}
+          />
+        );
+      })()}
     </div>
   );
 }
