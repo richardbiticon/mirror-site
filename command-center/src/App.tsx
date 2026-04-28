@@ -46,6 +46,8 @@ export default function App() {
     deleteMilestone,
     addExpense,
     deleteExpense,
+    addActivity,
+    deleteActivity,
     resetToSeed: resetProjects,
     replaceAll: replaceProjects,
   } = useProjects();
@@ -426,6 +428,8 @@ export default function App() {
                 projectId: selectedProject.id,
               })
             }
+            onAddActivity={addActivity}
+            onActivityDelete={deleteActivity}
           />
         ) : (
           <>

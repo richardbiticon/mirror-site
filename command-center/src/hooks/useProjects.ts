@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type {
+  Activity,
   Expense,
   Lead,
   Milestone,
@@ -23,6 +24,7 @@ export interface ConvertLeadInput {
 
 export type NewMilestoneInput = Omit<Milestone, "id">;
 export type NewExpenseInput = Omit<Expense, "id">;
+export type NewActivityInput = Omit<Activity, "id" | "createdAt">;
 export type ProjectEditInput = Pick<
   Project,
   | "clientName"
@@ -38,6 +40,7 @@ function normalizeProject(p: Project): Project {
     ...p,
     milestones: Array.isArray(p.milestones) ? p.milestones : [],
     expenses: Array.isArray(p.expenses) ? p.expenses : [],
+    activities: Array.isArray(p.activities) ? p.activities : [],
   };
 }
 
@@ -70,6 +73,15 @@ export function useProjects() {
           input.targetEndDate
         ),
         expenses: [],
+        activities: [
+          {
+            id: newId("act"),
+            type: "milestone",
+            occurredAt: new Date().toISOString().slice(0, 10),
+            summary: "Project created from won lead.",
+            createdAt: now,
+          },
+        ],
         notes: input.notes,
         createdAt: now,
         updatedAt: now,
@@ -204,6 +216,46 @@ export function useProjects() {
     []
   );
 
+  const addActivity = useCallback(
+    (projectId: string, input: NewActivityInput) => {
+      const activity: Activity = {
+        ...input,
+        id: newId("act"),
+        createdAt: new Date().toISOString(),
+      };
+      setProjects((prev) =>
+        prev.map((p) =>
+          p.id === projectId
+            ? {
+                ...p,
+                activities: [activity, ...p.activities],
+                updatedAt: new Date().toISOString(),
+              }
+            : p
+        )
+      );
+      return activity;
+    },
+    []
+  );
+
+  const deleteActivity = useCallback(
+    (projectId: string, activityId: string) => {
+      setProjects((prev) =>
+        prev.map((p) =>
+          p.id === projectId
+            ? {
+                ...p,
+                activities: p.activities.filter((a) => a.id !== activityId),
+                updatedAt: new Date().toISOString(),
+              }
+            : p
+        )
+      );
+    },
+    []
+  );
+
   const updateProject = useCallback(
     (id: string, input: ProjectEditInput) => {
       setProjects((prev) =>
@@ -254,6 +306,8 @@ export function useProjects() {
     deleteMilestone,
     addExpense,
     deleteExpense,
+    addActivity,
+    deleteActivity,
     resetToSeed,
     replaceAll,
   };

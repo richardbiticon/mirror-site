@@ -14,7 +14,10 @@ import { AddMilestoneForm } from "./AddMilestoneForm";
 import { ExpenseList } from "./ExpenseList";
 import { AddExpenseForm } from "./AddExpenseForm";
 import { ProjectEditForm } from "./ProjectEditForm";
+import { ActivityFeed } from "./ActivityFeed";
+import { AddActivityForm } from "./AddActivityForm";
 import type {
+  NewActivityInput,
   NewExpenseInput,
   NewMilestoneInput,
   ProjectEditInput,
@@ -40,6 +43,8 @@ interface Props {
   onDeleteProject: (id: string) => void;
   onInvoiceMilestone: (milestone: Milestone) => void;
   onQuotation: () => void;
+  onAddActivity: (projectId: string, input: NewActivityInput) => void;
+  onActivityDelete: (projectId: string, activityId: string) => void;
 }
 
 export function ProjectDetail({
@@ -56,9 +61,12 @@ export function ProjectDetail({
   onDeleteProject,
   onInvoiceMilestone,
   onQuotation,
+  onAddActivity,
+  onActivityDelete,
 }: Props) {
   const [showAddMilestone, setShowAddMilestone] = useState(false);
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const [showAddActivity, setShowAddActivity] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const money = summarizeProjectMoney(project);
   const margin = projectMargin(project);
@@ -278,6 +286,48 @@ export function ProjectDetail({
         <ExpenseList
           expenses={project.expenses}
           onDelete={(eid) => onExpenseDelete(project.id, eid)}
+        />
+      </section>
+
+      <section className="mt-10">
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+              Activity Log
+            </h3>
+            <p className="text-xs text-slate-500">
+              {project.activities.length} entries
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddActivity((v) => !v);
+              setShowAddMilestone(false);
+              setShowAddExpense(false);
+              setShowEdit(false);
+            }}
+            className="rounded bg-sky-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-sky-500"
+          >
+            {showAddActivity ? "Close" : "+ Log Activity"}
+          </button>
+        </div>
+
+        {showAddActivity && (
+          <div className="mb-4">
+            <AddActivityForm
+              onSubmit={(input) => {
+                onAddActivity(project.id, input);
+                setShowAddActivity(false);
+              }}
+              onCancel={() => setShowAddActivity(false)}
+            />
+          </div>
+        )}
+
+        <ActivityFeed
+          activities={project.activities}
+          onDelete={(aid) => onActivityDelete(project.id, aid)}
         />
       </section>
     </div>

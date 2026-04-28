@@ -76,6 +76,25 @@ export interface Expense {
   notes?: string;
 }
 
+export type ActivityType =
+  | "site_visit"
+  | "client_meeting"
+  | "call"
+  | "delivery"
+  | "inspection"
+  | "issue"
+  | "milestone"
+  | "note";
+
+export interface Activity {
+  id: string;
+  type: ActivityType;
+  occurredAt: string;
+  summary: string;
+  details?: string;
+  createdAt: string;
+}
+
 export interface Project {
   id: string;
   leadId?: string;
@@ -88,6 +107,7 @@ export interface Project {
   progressPercent: number;
   milestones: Milestone[];
   expenses: Expense[];
+  activities: Activity[];
   notes?: string;
   createdAt: string;
   updatedAt: string;
