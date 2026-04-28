@@ -12,6 +12,7 @@ import { ExportPanel } from "./components/ExportPanel";
 import { SearchInput } from "./components/SearchInput";
 import { BusinessSettingsForm } from "./components/BusinessSettingsForm";
 import { PrintableDoc } from "./components/PrintableDoc";
+import { LeadDetail } from "./components/LeadDetail";
 import { useBusinessProfile } from "./hooks/useBusinessProfile";
 import { invoiceNumber, quotationNumber } from "./lib/invoice";
 import type { Milestone } from "./types";
@@ -31,6 +32,8 @@ export default function App() {
     updateStage,
     updateLead,
     deleteLead,
+    addActivity: addLeadActivity,
+    deleteActivity: deleteLeadActivity,
     resetToSeed: resetLeads,
     replaceAll: replaceLeads,
   } = useLeads();
@@ -69,6 +72,7 @@ export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
   );
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [showSyncSettings, setShowSyncSettings] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [showBusinessSettings, setShowBusinessSettings] = useState(false);
@@ -83,6 +87,11 @@ export default function App() {
   const selectedProject = useMemo(
     () => projects.find((p) => p.id === selectedProjectId) ?? null,
     [projects, selectedProjectId]
+  );
+
+  const selectedLead = useMemo(
+    () => leads.find((l) => l.id === selectedLeadId) ?? null,
+    [leads, selectedLeadId]
   );
 
   const convertedLeadIds = useMemo(
@@ -234,7 +243,10 @@ export default function App() {
           />
           <TabButton
             active={tab === "leads"}
-            onClick={() => setTab("leads")}
+            onClick={() => {
+              setTab("leads");
+              setSelectedLeadId(null);
+            }}
             label="Leads"
             count={leads.length}
           />
@@ -296,7 +308,36 @@ export default function App() {
               setSelectedProjectId(id);
               setTab("projects");
             }}
-            onGoToLeads={() => setTab("leads")}
+            onOpenLead={(id) => {
+              setSelectedLeadId(id);
+              setTab("leads");
+            }}
+            onGoToLeads={() => {
+              setTab("leads");
+              setSelectedLeadId(null);
+            }}
+          />
+        ) : tab === "leads" && selectedLead ? (
+          <LeadDetail
+            lead={selectedLead}
+            isConverted={convertedLeadIds.has(selectedLead.id)}
+            onBack={() => setSelectedLeadId(null)}
+            onStageChange={updateStage}
+            onEdit={(lead) => {
+              setSelectedLeadId(null);
+              setEditingLead(lead);
+              setShowForm(false);
+              setConvertingLead(null);
+            }}
+            onConvert={(lead) => {
+              setSelectedLeadId(null);
+              setConvertingLead(lead);
+              setShowForm(false);
+              setEditingLead(null);
+            }}
+            onDelete={(lead) => deleteLead(lead.id)}
+            onAddActivity={addLeadActivity}
+            onActivityDelete={deleteLeadActivity}
           />
         ) : tab === "leads" ? (
           <>
@@ -400,6 +441,7 @@ export default function App() {
                 setConvertingLead(null);
               }}
               onDelete={(lead) => deleteLead(lead.id)}
+              onOpen={(id) => setSelectedLeadId(id)}
             />
           </>
         ) : selectedProject ? (

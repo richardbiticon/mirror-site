@@ -30,6 +30,7 @@ export interface Lead {
   estimatedValuePhp: number;
   stage: LeadStage;
   notes?: string;
+  activities: Activity[];
   createdAt: string;
   updatedAt: string;
 }

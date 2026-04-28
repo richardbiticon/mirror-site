@@ -14,6 +14,7 @@ interface Props {
   leads: Lead[];
   projects: Project[];
   onOpenProject: (id: string) => void;
+  onOpenLead: (id: string) => void;
   onGoToLeads: () => void;
 }
 
@@ -21,6 +22,7 @@ export function Dashboard({
   leads,
   projects,
   onOpenProject,
+  onOpenLead,
   onGoToLeads,
 }: Props) {
   const overdue = getOverdueMilestones(projects);
@@ -179,21 +181,24 @@ export function Dashboard({
           ) : (
             <ul className="divide-y divide-slate-800">
               {unconverted.map((lead) => (
-                <li
-                  key={lead.id}
-                  className="flex items-center justify-between py-2"
-                >
-                  <div>
-                    <div className="text-sm font-medium text-slate-100">
-                      {lead.name}
+                <li key={lead.id}>
+                  <button
+                    type="button"
+                    onClick={() => onOpenLead(lead.id)}
+                    className="flex w-full items-center justify-between rounded px-1 py-2 text-left hover:bg-slate-900"
+                  >
+                    <div>
+                      <div className="text-sm font-medium text-slate-100">
+                        {lead.name}
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        {lead.source} . {lead.projectType.replace("_", " ")}
+                      </div>
                     </div>
-                    <div className="text-xs text-slate-500">
-                      {lead.source} . {lead.projectType.replace("_", " ")}
+                    <div className="font-mono text-sm text-slate-300">
+                      {formatPhp(lead.estimatedValuePhp)}
                     </div>
-                  </div>
-                  <div className="font-mono text-sm text-slate-300">
-                    {formatPhp(lead.estimatedValuePhp)}
-                  </div>
+                  </button>
                 </li>
               ))}
             </ul>

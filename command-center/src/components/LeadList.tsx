@@ -10,6 +10,7 @@ interface Props {
   onConvert: (lead: Lead) => void;
   onEdit: (lead: Lead) => void;
   onDelete: (lead: Lead) => void;
+  onOpen: (id: string) => void;
 }
 
 export function LeadList({
@@ -19,6 +20,7 @@ export function LeadList({
   onConvert,
   onEdit,
   onDelete,
+  onOpen,
 }: Props) {
   if (leads.length === 0) {
     return (
@@ -49,8 +51,16 @@ export function LeadList({
             return (
               <tr key={lead.id} className="hover:bg-slate-900">
                 <td className="px-4 py-3">
-                  <div className="font-medium text-slate-100">{lead.name}</div>
-                  <div className="text-xs text-slate-500">{lead.source}</div>
+                  <button
+                    type="button"
+                    onClick={() => onOpen(lead.id)}
+                    className="text-left"
+                  >
+                    <div className="font-medium text-slate-100 hover:text-sky-300">
+                      {lead.name}
+                    </div>
+                    <div className="text-xs text-slate-500">{lead.source}</div>
+                  </button>
                 </td>
                 <td className="px-4 py-3">
                   <PhoneActions
