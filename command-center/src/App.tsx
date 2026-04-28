@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { LeadList } from "./components/LeadList";
-import { AddLeadForm } from "./components/AddLeadForm";
+import { LeadForm } from "./components/LeadForm";
 import { StageFilter, type StageFilterValue } from "./components/StageFilter";
 import { ConvertLeadForm } from "./components/ConvertLeadForm";
 import { ProjectList } from "./components/ProjectList";
@@ -22,6 +22,8 @@ export default function App() {
     leads,
     addLead,
     updateStage,
+    updateLead,
+    deleteLead,
     resetToSeed: resetLeads,
     replaceAll: replaceLeads,
   } = useLeads();
@@ -49,6 +51,7 @@ export default function App() {
   const [tab, setTab] = useState<Tab>("dashboard");
   const [filter, setFilter] = useState<StageFilterValue>("all");
   const [showForm, setShowForm] = useState(false);
+  const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [convertingLead, setConvertingLead] = useState<Lead | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null
@@ -214,6 +217,7 @@ export default function App() {
                 onClick={() => {
                   setShowForm((v) => !v);
                   setConvertingLead(null);
+                  setEditingLead(null);
                 }}
                 className="rounded bg-sky-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-sky-500"
               >
@@ -223,12 +227,27 @@ export default function App() {
 
             {showForm && (
               <section className="mb-8">
-                <AddLeadForm
+                <LeadForm
+                  mode="create"
                   onSubmit={(input) => {
                     addLead(input);
                     setShowForm(false);
                   }}
                   onCancel={() => setShowForm(false)}
+                />
+              </section>
+            )}
+
+            {editingLead && (
+              <section className="mb-8">
+                <LeadForm
+                  mode="edit"
+                  initial={editingLead}
+                  onSubmit={(input) => {
+                    updateLead(editingLead.id, input);
+                    setEditingLead(null);
+                  }}
+                  onCancel={() => setEditingLead(null)}
                 />
               </section>
             )}
@@ -266,7 +285,14 @@ export default function App() {
               onConvert={(lead) => {
                 setConvertingLead(lead);
                 setShowForm(false);
+                setEditingLead(null);
               }}
+              onEdit={(lead) => {
+                setEditingLead(lead);
+                setShowForm(false);
+                setConvertingLead(null);
+              }}
+              onDelete={(lead) => deleteLead(lead.id)}
             />
           </>
         ) : selectedProject ? (

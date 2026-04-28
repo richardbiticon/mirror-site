@@ -1,8 +1,12 @@
 import { useState } from "react";
-import type { ProjectType } from "../types";
+import type { Lead, ProjectType } from "../types";
 import type { NewLeadInput } from "../hooks/useLeads";
 
+type Mode = "create" | "edit";
+
 interface Props {
+  mode?: Mode;
+  initial?: Lead;
   onSubmit: (lead: NewLeadInput) => void;
   onCancel: () => void;
 }
@@ -24,14 +28,23 @@ const SOURCES = [
   "Other",
 ];
 
-export function AddLeadForm({ onSubmit, onCancel }: Props) {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [source, setSource] = useState(SOURCES[0]);
-  const [projectType, setProjectType] = useState<ProjectType>("residential");
-  const [estimatedValuePhp, setEstimatedValuePhp] = useState("");
-  const [notes, setNotes] = useState("");
+export function LeadForm({
+  mode = "create",
+  initial,
+  onSubmit,
+  onCancel,
+}: Props) {
+  const [name, setName] = useState(initial?.name ?? "");
+  const [phone, setPhone] = useState(initial?.phone ?? "");
+  const [email, setEmail] = useState(initial?.email ?? "");
+  const [source, setSource] = useState(initial?.source ?? SOURCES[0]);
+  const [projectType, setProjectType] = useState<ProjectType>(
+    initial?.projectType ?? "residential"
+  );
+  const [estimatedValuePhp, setEstimatedValuePhp] = useState(
+    initial ? String(initial.estimatedValuePhp) : ""
+  );
+  const [notes, setNotes] = useState(initial?.notes ?? "");
   const [error, setError] = useState<string | null>(null);
 
   function handleSubmit(e: React.FormEvent) {
@@ -52,7 +65,7 @@ export function AddLeadForm({ onSubmit, onCancel }: Props) {
       source,
       projectType,
       estimatedValuePhp: value,
-      stage: "new",
+      stage: initial?.stage ?? "new",
       notes: notes.trim() || undefined,
     });
   }
@@ -62,6 +75,17 @@ export function AddLeadForm({ onSubmit, onCancel }: Props) {
       onSubmit={handleSubmit}
       className="rounded-lg border border-slate-800 bg-slate-950 p-5"
     >
+      <div className="mb-4 flex items-baseline justify-between">
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
+          {mode === "edit" ? "Edit Lead" : "New Lead"}
+        </h3>
+        {initial && (
+          <span className="font-mono text-xs text-slate-500">
+            {initial.id}
+          </span>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Name *">
           <input
@@ -135,9 +159,7 @@ export function AddLeadForm({ onSubmit, onCancel }: Props) {
         </div>
       </div>
 
-      {error && (
-        <p className="mt-3 text-xs text-rose-400">{error}</p>
-      )}
+      {error && <p className="mt-3 text-xs text-rose-400">{error}</p>}
 
       <div className="mt-5 flex items-center justify-end gap-2">
         <button
@@ -151,7 +173,7 @@ export function AddLeadForm({ onSubmit, onCancel }: Props) {
           type="submit"
           className="rounded bg-sky-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-sky-500"
         >
-          Save Lead
+          {mode === "edit" ? "Save Changes" : "Save Lead"}
         </button>
       </div>
     </form>
@@ -161,7 +183,13 @@ export function AddLeadForm({ onSubmit, onCancel }: Props) {
 const inputClass =
   "w-full rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-sky-500 focus:outline-none";
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block">
       <span className="mb-1 block text-xs uppercase tracking-wide text-slate-400">

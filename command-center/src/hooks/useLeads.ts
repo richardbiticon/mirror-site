@@ -38,6 +38,20 @@ export function useLeads() {
     );
   }, []);
 
+  const updateLead = useCallback((id: string, input: NewLeadInput) => {
+    setLeads((prev) =>
+      prev.map((l) =>
+        l.id === id
+          ? { ...l, ...input, updatedAt: new Date().toISOString() }
+          : l
+      )
+    );
+  }, []);
+
+  const deleteLead = useCallback((id: string) => {
+    setLeads((prev) => prev.filter((l) => l.id !== id));
+  }, []);
+
   const resetToSeed = useCallback(() => {
     setLeads(seedLeads as Lead[]);
   }, []);
@@ -46,5 +60,13 @@ export function useLeads() {
     setLeads(next);
   }, []);
 
-  return { leads, addLead, updateStage, resetToSeed, replaceAll };
+  return {
+    leads,
+    addLead,
+    updateStage,
+    updateLead,
+    deleteLead,
+    resetToSeed,
+    replaceAll,
+  };
 }

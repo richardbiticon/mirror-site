@@ -7,6 +7,8 @@ interface Props {
   convertedLeadIds: Set<string>;
   onStageChange: (id: string, stage: LeadStage) => void;
   onConvert: (lead: Lead) => void;
+  onEdit: (lead: Lead) => void;
+  onDelete: (lead: Lead) => void;
 }
 
 export function LeadList({
@@ -14,6 +16,8 @@ export function LeadList({
   convertedLeadIds,
   onStageChange,
   onConvert,
+  onEdit,
+  onDelete,
 }: Props) {
   if (leads.length === 0) {
     return (
@@ -34,7 +38,7 @@ export function LeadList({
             <th className="px-4 py-3 font-medium text-right">Est. Value</th>
             <th className="px-4 py-3 font-medium">Stage</th>
             <th className="px-4 py-3 font-medium">Updated</th>
-            <th className="px-4 py-3 font-medium" />
+            <th className="px-4 py-3 font-medium text-right">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-800 bg-slate-950">
@@ -65,21 +69,46 @@ export function LeadList({
                 <td className="px-4 py-3 text-slate-400">
                   {formatDate(lead.updatedAt)}
                 </td>
-                <td className="px-4 py-3 text-right">
-                  {canConvert && (
+                <td className="px-4 py-3">
+                  <div className="flex items-center justify-end gap-2">
+                    {canConvert && (
+                      <button
+                        type="button"
+                        onClick={() => onConvert(lead)}
+                        className="rounded bg-emerald-600 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white hover:bg-emerald-500"
+                      >
+                        Convert
+                      </button>
+                    )}
+                    {converted && (
+                      <span className="text-xs uppercase tracking-wide text-emerald-500">
+                        Project
+                      </span>
+                    )}
                     <button
                       type="button"
-                      onClick={() => onConvert(lead)}
-                      className="rounded bg-emerald-600 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white hover:bg-emerald-500"
+                      onClick={() => onEdit(lead)}
+                      className="text-xs uppercase tracking-wide text-slate-400 hover:text-slate-100"
                     >
-                      Convert
+                      Edit
                     </button>
-                  )}
-                  {converted && (
-                    <span className="text-xs uppercase tracking-wide text-emerald-500">
-                      Project
-                    </span>
-                  )}
+                    {!converted && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (
+                            confirm(
+                              `Delete lead "${lead.name}"? This cannot be undone.`
+                            )
+                          )
+                            onDelete(lead);
+                        }}
+                        className="text-xs uppercase tracking-wide text-slate-500 hover:text-rose-400"
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             );
